@@ -1,13 +1,6 @@
-﻿using FC.Codeflix.Catalog.Application.UseCases.Category.GetCategory;
+﻿using FluentAssertions;
+using FC.Codeflix.Catalog.Application.UseCases.Category.GetCategory;
 using FC.Codeflix.Catalog.UnitTests.Application.CreateCategory;
-
-using FluentAssertions;
-
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace FC.Codeflix.Catalog.UnitTests.Application.GetCategory;
 [Collection(nameof(CreateCategoryTestFixture))]

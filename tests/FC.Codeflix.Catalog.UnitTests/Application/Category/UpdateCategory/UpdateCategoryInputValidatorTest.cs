@@ -1,5 +1,4 @@
 ﻿using FC.Codeflix.Catalog.Application.UseCases.Category.UpdateCategory;
-
 using FluentAssertions;
 
 namespace FC.Codeflix.Catalog.UnitTests.Application.UpdateCategory;
@@ -38,6 +37,6 @@ public class UpdateCategoryInputValidatorTest
         validateResult.Should().NotBeNull();
         validateResult.IsValid.Should().BeTrue();
         validateResult.Errors.Should().HaveCount(0);
-        
+
     }
 }

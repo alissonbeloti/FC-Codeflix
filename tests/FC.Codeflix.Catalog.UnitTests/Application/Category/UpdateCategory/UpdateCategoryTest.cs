@@ -29,11 +29,11 @@ public class UpdateCategoryTest
     {
         var repositoryMock = _fixture.GetRepositoryMock();
         var unitOfWorkMock = _fixture.GetUnitOfWorkMock();
-  
+
         repositoryMock
             .Setup(x => x.Get(exampleCategory.Id, It.IsAny<CancellationToken>()))
             .ReturnsAsync(exampleCategory);
-  
+
 
         var useCase = new UseCase.UpdateCategory(repositoryMock.Object, unitOfWorkMock.Object);
 
@@ -56,7 +56,7 @@ public class UpdateCategoryTest
         parameters: 10, MemberType =
         typeof(UpdateCategoryTestDataGenerate)
         )]
-    public async Task UpdateCategoryWithoutProvidingIsActive(Category exampleCategory, 
+    public async Task UpdateCategoryWithoutProvidingIsActive(Category exampleCategory,
         UpdateCategoryInput exampleInput)
     {
         var input = new UpdateCategoryInput(
@@ -133,13 +133,13 @@ public class UpdateCategoryTest
         var useCase = new UseCase.UpdateCategory(repositoryMock.Object, unitOfWorkMock.Object);
 
         var task = async () => await useCase.Handle(input, CancellationToken.None);
-        
+
         await task.Should().ThrowAsync<NotFoundException>();
-        
+
         repositoryMock.Verify(x => x.Get(input.Id, It.IsAny<CancellationToken>()), Times.Once);
-        
+
     }
-    
+
     [Theory(DisplayName = nameof(ThroowWhenCantUpdateCategory))]
     [Trait("Application", "UpdateCategory - Use Cases")]
     [MemberData(nameof(UpdateCategoryTestDataGenerate.GetInvalidInputs), parameters: 12, MemberType = typeof(UpdateCategoryTestDataGenerate))]

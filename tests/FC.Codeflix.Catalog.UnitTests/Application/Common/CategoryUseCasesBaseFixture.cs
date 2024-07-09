@@ -1,18 +1,16 @@
 ﻿using Moq;
+using FC.Codeflix.Catalog.Domain.Entity;
 using FC.Codeflix.Catalog.UnitTests.Common;
 using FC.Codeflix.Catalog.Domain.Repository;
-using FC.Codeflix.Catalog.Domain.Entity;
+using FC.Codeflix.Catalog.Application.Interfaces;
 
-namespace FC.Codeflix.Catalog.UnitTests.Application.GetCategory;
 
-[CollectionDefinition(nameof(GetCategoryTestFixture))]
-public class GetCategoryTestFixtureCollection
-    : ICollectionFixture<GetCategoryTestFixture>
-{ }
-public class GetCategoryTestFixture : BaseFixture
+namespace FC.Codeflix.Catalog.UnitTests.Application.Common;
+public abstract class CategoryUseCasesBaseFixture
+    : BaseFixture
 {
     public Mock<ICategoryRepository> GetRepositoryMock() => new();
-
+    public Mock<IUnitOfWork> GetUnitOfWorkMock() => new();
     public string GetValidCategoryName()
     {
         var categoryName = "";
@@ -40,9 +38,9 @@ public class GetCategoryTestFixture : BaseFixture
         return categoryDescription;
     }
 
-    public Category GetValidCategory()
-        => new(
-            GetValidCategoryName(),
-            GetValidCategoryDescription()
-            );
+    public bool GetRandoBoolean()
+        => (new Random()).NextDouble() < 0.5;
+
+    public Category GetExampleCategory()
+        => new(GetValidCategoryName(), GetValidCategoryDescription(), GetRandoBoolean());
 }
