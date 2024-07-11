@@ -1,21 +1,11 @@
-﻿namespace FC.Codeflix.Catalog.UnitTests.Application.UpdateCategory;
-public class UpdateCategoryTestDataGenerate
+﻿namespace FC.Codeflix.Catalog.IntegrationTest.Applications.UseCases.Category.CreateCategory;
+public class CreateCategoryTestDataGenerator
 {
-    public static IEnumerable<object[]> GetCategoriesToUpdate(int times = 10)
+    public static IEnumerable<object[]> GetInvalidInputs(int times = 12)
     {
-        var fixture = new UpdateCategoryTestFixture();
-        for (int indice = 0; indice < times; indice++)
-        {
-            var exampleCategory = fixture.GetExampleCategory();
-            var exampleInput = fixture.GetValidInput(exampleCategory.Id);
-            yield return new object[] { exampleCategory, exampleInput };
-        }
-    }
-    public static IEnumerable<object[]> GetInvalidInputs(int times = 9)
-    {
-        var fixture = new UpdateCategoryTestFixture();
+        var fixture = new CreateCategoryTestFixture();
         var invalidInputList = new List<object[]>();
-        var totalInvalidCases = 3;
+        var totalInvalidCases = 4;
 
         for (int index = 0; index < times; index++)
         {
@@ -28,6 +18,9 @@ public class UpdateCategoryTestDataGenerate
                     invalidInputList.Add(new object[] { fixture.GetInvalidInputLongName(), $"Name should be less or equal 255 characters" });
                     break;
                 case 2:
+                    invalidInputList.Add(new object[] { fixture.GetInvalidInputDescriptionNull(), $"Description should not be null" });
+                    break;
+                case 3:
                     invalidInputList.Add(new object[] { fixture.GetInvalidInputTooLongDescritpion(), $"Description should be less or equal 10000 characters" });
                     break;
                 default:
