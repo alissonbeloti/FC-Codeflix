@@ -1,5 +1,6 @@
 ﻿using FC.Codeflix.Catalog.Application.UseCases.Category.Common;
 using FC.Codeflix.Catalog.Application.UseCases.Category.CreateCategory;
+using FC.Codeflix.Catalog.Application.UseCases.Category.GetCategory;
 
 using MediatR;
 
@@ -27,9 +28,13 @@ public class CategoriesController : ControllerBase
 
     // GET api/<CategoriesController>/5
     [HttpGet("{id}")]
-    public string Get(int id)
+    [ProducesResponseType(typeof(CategoryModelOutput), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status422UnprocessableEntity)]
+    public async Task<IActionResult> Get([FromRoute] Guid id, CancellationToken cancellation)
     {
-        return "value";
+        var output = await _mediator.Send(new GetCategoryInput(id), cancellation);
+        return Ok(output);
     }
 
     // POST api/<CategoriesController>

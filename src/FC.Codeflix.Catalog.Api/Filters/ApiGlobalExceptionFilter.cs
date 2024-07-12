@@ -1,4 +1,5 @@
-﻿using FC.Codeflix.Catalog.Domain.Exceptions;
+﻿using FC.Codeflix.Catalog.Application.Exceptions;
+using FC.Codeflix.Catalog.Domain.Exceptions;
 
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
@@ -29,10 +30,16 @@ public class ApiGlobalExceptionFilter : IExceptionFilter
             details.Status = (int)HttpStatusCode.UnprocessableEntity;
             details.Detail = ex!.Message;
             details.Type = "UnprocessableEntity";
+        } 
+        else if (exception is NotFoundException)
+        {
+            details.Title = "Not Found";
+            details.Status = (int)HttpStatusCode.NotFound;
+            details.Detail = exception!.Message;
+            details.Type = "NotFound";
         }
         else
         {
-            
             details.Title = "An unexpected error occurred";
             details.Status = (int)HttpStatusCode.UnprocessableEntity;
             details.Detail = exception.Message;
