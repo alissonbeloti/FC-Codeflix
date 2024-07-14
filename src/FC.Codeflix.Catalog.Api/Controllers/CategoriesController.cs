@@ -1,10 +1,15 @@
 ﻿using FC.Codeflix.Catalog.Application.UseCases.Category.Common;
 using FC.Codeflix.Catalog.Application.UseCases.Category.CreateCategory;
+using FC.Codeflix.Catalog.Application.UseCases.Category.DeleteCategory;
 using FC.Codeflix.Catalog.Application.UseCases.Category.GetCategory;
+using FC.Codeflix.Catalog.Application.UseCases.Category.UpdateCategory;
 
 using MediatR;
 
 using Microsoft.AspNetCore.Mvc;
+
+using System;
+using System.Threading;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -19,18 +24,11 @@ public class CategoriesController : ControllerBase
     public CategoriesController(IMediator mediator)
         => _mediator = mediator;
 
-    // GET: api/<CategoriesController>
-    [HttpGet]
-    public IEnumerable<string> Get()
-    {
-        return new string[] { "value1", "value2" };
-    }
-
+    
     // GET api/<CategoriesController>/5
     [HttpGet("{id}")]
     [ProducesResponseType(typeof(CategoryModelOutput), StatusCodes.Status200OK)]
-    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
-    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status422UnprocessableEntity)]
+    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status404NotFound)]
     public async Task<IActionResult> Get([FromRoute] Guid id, CancellationToken cancellation)
     {
         var output = await _mediator.Send(new GetCategoryInput(id), cancellation);
@@ -49,14 +47,24 @@ public class CategoriesController : ControllerBase
     }
 
     // PUT api/<CategoriesController>/5
-    [HttpPut("{id}")]
-    public void Put(int id, [FromBody] string value)
+    [HttpPut("{id:guid}")]
+    [ProducesResponseType(typeof(CategoryModelOutput), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status404NotFound)]
+    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status422UnprocessableEntity)]
+    public async Task<IActionResult> Put(Guid id, [FromBody] UpdateCategoryInput input, CancellationToken cancellationToken)
     {
+        var result = await _mediator.Send(input, cancellationToken);
+        return Ok(result);
     }
 
     // DELETE api/<CategoriesController>/5
     [HttpDelete("{id}")]
-    public void Delete(int id)
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status404NotFound)]
+    public async Task<IActionResult> Delete(Guid id, CancellationToken cancellationToken)
     {
+        await _mediator.Send(new DeleteCategoryInput(id), cancellationToken);
+        return NoContent();
     }
 }
