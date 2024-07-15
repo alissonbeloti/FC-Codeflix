@@ -1,14 +1,15 @@
 ﻿using System.Net;
 using FluentAssertions;
-using FC.Codeflix.Catalog.Application.UseCases.Category.Common;
-using DomainEntity = FC.Codeflix.Catalog.Domain.Entity;
-using FC.Codeflix.Catalog.Application.UseCases.Category.CreateCategory;
 using Microsoft.AspNetCore.Mvc;
+using DomainEntity = FC.Codeflix.Catalog.Domain.Entity;
+using FC.Codeflix.Catalog.Application.UseCases.Category.Common;
+using FC.Codeflix.Catalog.Application.UseCases.Category.CreateCategory;
 
 
 namespace FC.Codeflix.Catalog.EndToEndTests.Api.Category.CreateCategory;
 [Collection(nameof(CreateCategoryApiTestFixture))]
-public class CreateCategoryApiTest
+public class CreateCategoryApiTest :
+    IDisposable
 {
     private readonly CreateCategoryApiTestFixture _fixture;
 
@@ -36,7 +37,7 @@ public class CreateCategoryApiTest
         output.IsActive.Should().Be(input.IsActive);
         output.CreatedAt.Should().NotBeSameDateAs(default(DateTime));
 
-        DomainEntity.Category?  dbCategory = await _fixture.Persistence
+        DomainEntity.Category? dbCategory = await _fixture.Persistence
             .GetById(output.Id);
         dbCategory.Should().NotBeNull();
         dbCategory.Id.Should().NotBeEmpty();
@@ -45,6 +46,9 @@ public class CreateCategoryApiTest
         dbCategory.IsActive.Should().Be(input.IsActive);
         dbCategory.CreatedAt.Should().NotBeSameDateAs(default);
     }
+
+    public void Dispose()
+        => _fixture.CleanPersistence();
 
     [Theory(DisplayName = nameof(ErrorWhenCanInstantiateAggregate))]
     [Trait("EndToEnd/API", "Category/Create - Endpoints")]

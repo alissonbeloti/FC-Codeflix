@@ -1,4 +1,4 @@
-﻿namespace FC.Codeflix.Catalog.EndToEndTests.Api.UpdateCategory;
+﻿namespace FC.Codeflix.Catalog.EndToEndTests.Api.Category.UpdateCategory;
 public class UpdateCategoryApiTestDataGenerator
 {
     public static IEnumerable<object[]> GetInvalidInputs()

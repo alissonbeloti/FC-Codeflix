@@ -1,7 +1,7 @@
 ﻿using FC.Codeflix.Catalog.Application.UseCases.Category.UpdateCategory;
 using FC.Codeflix.Catalog.EndToEndTests.Api.Category.Common;
 
-namespace FC.Codeflix.Catalog.EndToEndTests.Api.UpdateCategory;
+namespace FC.Codeflix.Catalog.EndToEndTests.Api.Category.UpdateCategory;
 [CollectionDefinition(nameof(UpdateApiCategoryTestFixture))]
 public class UpdateApiCategoryTestFixtureCollection : ICollectionFixture<UpdateApiCategoryTestFixture>
 { }

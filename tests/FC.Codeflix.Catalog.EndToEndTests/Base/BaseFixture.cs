@@ -30,6 +30,13 @@ public class BaseFixture
         
         return dbContext;
     }
+
+    public void CleanPersistence() 
+    { 
+        var context = CreateDbContext();
+        context.Database.EnsureDeleted();
+        context.Database.EnsureCreated();
+    }
     public string GetValidCategoryName()
     {
         var categoryName = "";

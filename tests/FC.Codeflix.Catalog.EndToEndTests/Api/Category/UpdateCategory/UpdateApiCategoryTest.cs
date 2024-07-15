@@ -9,9 +9,9 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.DependencyInjection;
 using FC.Codeflix.Catalog.EndToEndTests.Api.Category.CreateCategory;
 
-namespace FC.Codeflix.Catalog.EndToEndTests.Api.UpdateCategory;
+namespace FC.Codeflix.Catalog.EndToEndTests.Api.Category.UpdateCategory;
 [Collection(nameof(UpdateApiCategoryTestFixture))]
-public class UpdateApiCategoryTest
+public class UpdateApiCategoryTest: IDisposable
 {
     private readonly UpdateApiCategoryTestFixture _fixture;
 
@@ -57,7 +57,7 @@ public class UpdateApiCategoryTest
         await _fixture.Persistence.InsertList(exampleCategoriesList);
         var exampleCategory = exampleCategoriesList[10];
         var input = new UpdateCategoryInput(exampleCategory.Id, _fixture.GetValidCategoryName());
-        
+
 
         var (response, output) = await _fixture.ApiClient.Put<CategoryModelOutput>(
             $"/categories/{exampleCategory.Id}", input);
@@ -155,6 +155,9 @@ public class UpdateApiCategoryTest
         output.Type.Should().Be("UnprocessableEntity");
         output.Status.Should().Be((int)HttpStatusCode.UnprocessableEntity);
         output.Detail.Should().Be(expectedDetail);
-
     }
+
+
+    public void Dispose()
+        => _fixture.CleanPersistence();
 }

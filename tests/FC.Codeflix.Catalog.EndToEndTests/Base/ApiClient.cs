@@ -1,4 +1,6 @@
-﻿using System.Text;
+﻿using Microsoft.AspNetCore.WebUtilities;
+
+using System.Text;
 using System.Text.Json;
 
 namespace FC.Codeflix.Catalog.EndToEndTests.Base;
@@ -37,11 +39,15 @@ public class ApiClient
     }
 
 
-    public async Task<(HttpResponseMessage?, TOutput?)> Get<TOutput>(string route)
+    public async Task<(HttpResponseMessage?, TOutput?)> Get<TOutput>(
+        string route,
+        object? queryStringParametersObject = null)
         where TOutput : class
     {
+        var url = PrepareGetRoute(route, queryStringParametersObject);
+
         var response = await _httpClient.GetAsync(
-            route
+            url
         );
         TOutput? output = await GetOutput<TOutput>(response);
         return (response, output);
@@ -67,5 +73,15 @@ public class ApiClient
             });
         return output;
     }
-
+    private string PrepareGetRoute(string route, object? queryStringParametersObject = null)
+    {
+        if (queryStringParametersObject is null)
+        {
+            return route;
+        }
+        var parametersJson = JsonSerializer.Serialize(queryStringParametersObject);
+        var parametersDictionary = 
+            Newtonsoft.Json.JsonConvert.DeserializeObject<Dictionary<string, string>>(parametersJson);
+        return QueryHelpers.AddQueryString(route, parametersDictionary!);
+    }
 }

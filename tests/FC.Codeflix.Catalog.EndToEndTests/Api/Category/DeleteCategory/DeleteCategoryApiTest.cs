@@ -7,7 +7,7 @@ using System.Net;
 
 namespace FC.Codeflix.Catalog.EndToEndTests.Api.Category.DeleteCategory;
 [Collection(nameof(DeleteCategoryTestFixture))]
-public class DeleteCategoryApiTest
+public class DeleteCategoryApiTest: IDisposable
 {
     private readonly DeleteCategoryTestFixture _fixture;
 
@@ -54,5 +54,6 @@ public class DeleteCategoryApiTest
         output.Status.Should().Be((int)HttpStatusCode.NotFound);
         output.Detail.Should().Be($"Category '{ramdomGuid}' not found.");
     }
-
+    public void Dispose()
+        => _fixture.CleanPersistence();
 }
