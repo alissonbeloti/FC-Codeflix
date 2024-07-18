@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using DomainEntity = FC.Codeflix.Catalog.Domain.Entity;
 using FC.Codeflix.Catalog.Application.UseCases.Category.Common;
 using FC.Codeflix.Catalog.Application.UseCases.Category.CreateCategory;
+using FC.Codeflix.Catalog.Api.ApiModels.Response;
 
 
 namespace FC.Codeflix.Catalog.EndToEndTests.Api.Category.CreateCategory;
@@ -24,21 +25,21 @@ public class CreateCategoryApiTest :
     {
         var input = _fixture.GetExampleInput();
 
-        var (response, output) = await _fixture.ApiClient.Post<CategoryModelOutput>(
+        var (response, output) = await _fixture.ApiClient.Post<ApiResponse<CategoryModelOutput>>(
             "/categories",
             input
             );
         response.Should().NotBeNull();
         response.StatusCode.Should().Be(HttpStatusCode.Created);
         output.Should().NotBeNull();
-        output.Id.Should().NotBeEmpty();
-        output.Name.Should().Be(input.Name);
-        output.Description.Should().Be(input.Description);
-        output.IsActive.Should().Be(input.IsActive);
-        output.CreatedAt.Should().NotBeSameDateAs(default(DateTime));
+        output.Data.Id.Should().NotBeEmpty();
+        output.Data.Name.Should().Be(input.Name);
+        output.Data.Description.Should().Be(input.Description);
+        output.Data.IsActive.Should().Be(input.IsActive);
+        output.Data.CreatedAt.Should().NotBeSameDateAs(default(DateTime));
 
         DomainEntity.Category? dbCategory = await _fixture.Persistence
-            .GetById(output.Id);
+            .GetById(output.Data.Id);
         dbCategory.Should().NotBeNull();
         dbCategory.Id.Should().NotBeEmpty();
         dbCategory.Name.Should().Be(input.Name);
