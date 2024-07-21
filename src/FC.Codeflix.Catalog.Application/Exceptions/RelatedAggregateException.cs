@@ -5,11 +5,10 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace FC.Codeflix.Catalog.Application.Exceptions;
-public class NotFoundException : ApplicationException
+public class RelatedAggregateException : ApplicationException
 {
-    public NotFoundException(string? message) : base(message)
+    public RelatedAggregateException(string? message) : base(message)
     {
     }
 
-    
 }

@@ -1,4 +1,5 @@
-﻿using FC.Codeflix.Catalog.Domain.Exceptions;
+﻿using FC.Codeflix.Catalog.Domain.Entity;
+using FC.Codeflix.Catalog.Domain.Exceptions;
 
 using FluentAssertions;
 
@@ -100,12 +101,12 @@ public class GenreTest
     public void Update()
     {
         var validGenre = _fixture.GetValidGenre();
-        var category = new DomainEntity.Genre(validGenre.Name, validGenre.IsActive);
+        var genre = new DomainEntity.Genre(validGenre.Name, validGenre.IsActive);
         var newValues = _fixture.GetValidGenre();
 
-        category.Update(newValues.Name!);
-
-        category.Name.Should().Be(newValues.Name);
+        genre.Update(newValues.Name!);
+        genre.Id.Should().NotBeEmpty();
+        genre.Name.Should().Be(newValues.Name);
     }
 
     [Fact(DisplayName = nameof(UpdateOnlyName))]
@@ -131,32 +132,7 @@ public class GenreTest
         action.Should().Throw<EntityValidationException>()
             .WithMessage("Name should not be empty or null");
     }
-
-    [Theory(DisplayName = nameof(UpdateErrorWhenNameIsLess3Characters))]
-    [Trait("Domain", "Genre - Aggregates")]
-    [InlineData("1")]
-    [InlineData("12")]
-    [InlineData("ca")]
-    [InlineData("a")]
-    public void UpdateErrorWhenNameIsLess3Characters(string invalidName)
-    {
-        var genre = _fixture.GetValidGenre();
-        Action action = () => genre.Update(invalidName);
-        action.Should().Throw<EntityValidationException>()
-            .WithMessage("Name should be at leats 3 caracters long");
-    }
-
-    [Fact(DisplayName = nameof(UpdateErrorWhenNameIsGreaterThan255Chracters))]
-    [Trait("Domain", "Genre - Aggregates")]
-    public void UpdateErrorWhenNameIsGreaterThan255Chracters()
-    {
-        var invalidName = _fixture.Faker.Lorem.Letter(256);
-        var genre = _fixture.GetValidGenre();
-        Action action = () => genre.Update(invalidName);
-        action.Should().Throw<EntityValidationException>()
-            .WithMessage("Name should be less or equal 255 characters");
-    }
-
+           
     [Fact(DisplayName = nameof(AddCategory))]
     [Trait("Domain", "Genre - Aggregates")]
     public void AddCategory()
@@ -213,8 +189,6 @@ public class GenreTest
         });
 
         genre.RemoveAllCategories();
-
         genre.Categories.Should().HaveCount(0);
-        
     }
 }

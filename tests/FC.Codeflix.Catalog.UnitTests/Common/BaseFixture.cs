@@ -11,4 +11,7 @@ public abstract class BaseFixture
 {
     public Faker Faker { get; set; }
     protected BaseFixture() => Faker = new Faker("pt_BR");
+
+    public bool GetRandoBoolean()
+        => (new Random()).NextDouble() < 0.5;
 }
