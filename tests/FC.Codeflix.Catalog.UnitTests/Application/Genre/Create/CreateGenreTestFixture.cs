@@ -9,7 +9,7 @@ namespace FC.Codeflix.Catalog.UnitTests.Application.Genre.Create;
 [CollectionDefinition(nameof(CreateGenreTestFixture))]
 public class CreateGenreTestFixtureCollection : ICollectionFixture<CreateGenreTestFixture> { }
 
-public class CreateGenreTestFixture : GenreUscasesBaseFixture
+public class CreateGenreTestFixture : GenreUsecasesBaseFixture
 {
         
     public CreateGenreInput GetExampleInput()

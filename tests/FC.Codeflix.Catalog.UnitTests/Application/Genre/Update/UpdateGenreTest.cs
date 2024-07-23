@@ -1,10 +1,10 @@
-﻿using UseCase = FC.Codeflix.Catalog.Application.UseCases.Genre.UpdateGenre;
+﻿using Moq;
 using FluentAssertions;
-using Moq;
+using FC.Codeflix.Catalog.Domain.Exceptions;
+using FC.Codeflix.Catalog.Application.Exceptions;
 using DomainEntity = FC.Codeflix.Catalog.Domain.Entity;
 using FC.Codeflix.Catalog.Application.UseCases.Genre.Common;
-using FC.Codeflix.Catalog.Application.Exceptions;
-using FC.Codeflix.Catalog.Domain.Exceptions;
+using UseCase = FC.Codeflix.Catalog.Application.UseCases.Genre.UpdateGenre;
 
 namespace FC.Codeflix.Catalog.UnitTests.Application.Genre.Update;
 [Collection(nameof(UpdateGenreTestFixture))]
