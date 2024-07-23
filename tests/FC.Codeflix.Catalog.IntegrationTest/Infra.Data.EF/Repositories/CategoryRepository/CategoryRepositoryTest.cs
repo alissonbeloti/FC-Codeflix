@@ -20,7 +20,7 @@ public class CategoryRepositoryTest
     }
 
     [Fact(DisplayName = nameof(Insert))]
-    [Trait("Integration/Infra.Data", "CategoryRepository - Repositories")]
+    [Trait("Integration/Infra.Data", "Repositories - CategoryRepository")]
     public async Task Insert()
     {
         CodeflixCatalogDbContext dbContext = fixture.CreateDbContext();
@@ -40,7 +40,7 @@ public class CategoryRepositoryTest
     }
 
     [Fact(DisplayName = nameof(Get))]
-    [Trait("Integration/Infra.Data", "CategoryRepository - Repositories")]
+    [Trait("Integration/Infra.Data", "Repositories - CategoryRepository")]
     public async Task Get()
     {
         CodeflixCatalogDbContext dbContext = fixture.CreateDbContext();
@@ -62,7 +62,7 @@ public class CategoryRepositoryTest
     }
 
     [Fact(DisplayName = nameof(GetThrowIfNotFound))]
-    [Trait("Integration/Infra.Data", "CategoryRepository - Repositories")]
+    [Trait("Integration/Infra.Data", "Repositories - CategoryRepository")]
     public async Task GetThrowIfNotFound()
     {
         CodeflixCatalogDbContext dbContext = fixture.CreateDbContext();
@@ -80,7 +80,7 @@ public class CategoryRepositoryTest
     }
 
     [Fact(DisplayName = nameof(Update))]
-    [Trait("Integration/Infra.Data", "CategoryRepository - Repositories")]
+    [Trait("Integration/Infra.Data", "Repositories - CategoryRepository")]
     public async Task Update()
     {
         CodeflixCatalogDbContext dbContext = fixture.CreateDbContext();
@@ -107,7 +107,7 @@ public class CategoryRepositoryTest
     }
 
     [Fact(DisplayName = nameof(Delete))]
-    [Trait("Integration/Infra.Data", "CategoryRepository - Repositories")]
+    [Trait("Integration/Infra.Data", "Repositories - CategoryRepository")]
     public async Task Delete()
     {
         CodeflixCatalogDbContext dbContext = fixture.CreateDbContext();
@@ -127,7 +127,7 @@ public class CategoryRepositoryTest
     }
 
     [Fact(DisplayName = nameof(SearchReturnsListAndTotal))]
-    [Trait("Integration/Infra.Data", "CategoryRepository - Repositories")]
+    [Trait("Integration/Infra.Data", "Repositories - CategoryRepository")]
     public async Task SearchReturnsListAndTotal()
     {
         CodeflixCatalogDbContext dbContext = fixture.CreateDbContext();
@@ -161,7 +161,7 @@ public class CategoryRepositoryTest
     }
 
     [Fact(DisplayName = nameof(SearchReturnsEmptyWhenPersistenceIsEmpty))]
-    [Trait("Integration/Infra.Data", "CategoryRepository - Repositories")]
+    [Trait("Integration/Infra.Data", "Repositories - CategoryRepository")]
     public async Task SearchReturnsEmptyWhenPersistenceIsEmpty()
     {
         CodeflixCatalogDbContext dbContext = fixture.CreateDbContext();
@@ -180,7 +180,7 @@ public class CategoryRepositoryTest
     }
 
     [Theory(DisplayName = nameof(SearchReturnsPaginated))]
-    [Trait("Integration/Infra.Data", "CategoryRepository - Repositories")]
+    [Trait("Integration/Infra.Data", "Repositories - CategoryRepository")]
     [InlineData(10, 1, 5, 5)]
     [InlineData(10, 2, 5, 5)]
     [InlineData(7, 2, 5, 2)]
@@ -218,7 +218,7 @@ public class CategoryRepositoryTest
     }
 
     [Theory(DisplayName = nameof(SearchReturnsPaginated))]
-    [Trait("Integration/Infra.Data", "CategoryRepository - Repositories")]
+    [Trait("Integration/Infra.Data", "Repositories - CategoryRepository")]
     [InlineData("Action", 1, 5, 1, 1)]
     [InlineData("Horror", 1, 5, 3, 3)]
     [InlineData("Horror", 2, 5, 0, 3)]
@@ -272,7 +272,7 @@ public class CategoryRepositoryTest
     }
     
     [Theory(DisplayName = nameof(SearchOrdered))]
-    [Trait("Integration/Infra.Data", "CategoryRepository - Repositories")]
+    [Trait("Integration/Infra.Data", "Repositories - CategoryRepository")]
     [InlineData("name", "asc")]
     [InlineData("name", "desc")]
     [InlineData("id", "asc")]
