@@ -20,13 +20,14 @@ public class ListGenreTest
     public async Task ListGenre()
     {
         var genreRepositoryMock = _fixture.GetRepositoryMock();
+        var categoryRepositoryMock = _fixture.GetCategoryRepositoryMock();
         var exampleGenresList = _fixture.GetExampleGenresList();
         var input = _fixture.GetExampleInput();
 
         var outputRepositorySearch = new SearchOutput<DomainEntity.Genre>(
                 currentPage: input.Page,
                 perPage: input.PerPage,
-                items: (IReadOnlyList<DomainEntity.Genre>)exampleGenresList,
+                items: exampleGenresList.AsReadOnly(),
                 total: new Random().Next(50, 200)
                 );
 
@@ -42,7 +43,7 @@ public class ListGenreTest
             )).ReturnsAsync(outputRepositorySearch);
 
 
-        var useCase = new UseCase.ListGenres(genreRepositoryMock.Object);
+        var useCase = new UseCase.ListGenres(genreRepositoryMock.Object, categoryRepositoryMock.Object);
         
         UseCase.ListGenresOutput output = await useCase.Handle(input, CancellationToken.None);
 
@@ -62,7 +63,7 @@ public class ListGenreTest
             outputItem.CreatedAt.Should().Be(repositoryGenre.CreatedAt);
             outputItem.Categories.Should().HaveCount(repositoryGenre.Categories.Count);
             foreach (var expectedId in repositoryGenre.Categories)
-                outputItem.Categories.Should().Contain(expectedId);
+                outputItem.Categories.Should().Contain(r => expectedId == r.Id);
         }
         genreRepositoryMock.Verify(x => x.SearchAsync(It.Is<SearchInput>(searchInput =>
                 searchInput.Page == input.Page &&
@@ -71,6 +72,13 @@ public class ListGenreTest
                 searchInput.OrderBy == input.Sort &&
                 searchInput.Order == input.Dir),
             It.IsAny<CancellationToken>()), Times.Once);
+        var expectedIds = exampleGenresList.SelectMany(z => z.Categories)
+                    .Distinct().ToList();
+        categoryRepositoryMock.Verify(x => 
+            x.GetListByIds(It.Is<List<Guid>>(parameterList => expectedIds.All(
+                id => parameterList.Contains(id) && expectedIds.Count == parameterList.Count
+            )), It.IsAny<CancellationToken>()), 
+            Times.Once);
     }
 
     [Fact(DisplayName = nameof(ListEmpty))]
@@ -78,6 +86,7 @@ public class ListGenreTest
     public async Task ListEmpty()
     {
         var genreRepositoryMock = _fixture.GetRepositoryMock();
+        var categoryRepositoryMock = _fixture.GetCategoryRepositoryMock();
         var input = _fixture.GetExampleInput();
 
         var outputRepositorySearch = new SearchOutput<DomainEntity.Genre>(
@@ -92,7 +101,7 @@ public class ListGenreTest
             It.IsAny<CancellationToken>()
             )).ReturnsAsync(outputRepositorySearch);
 
-        var useCase = new UseCase.ListGenres(genreRepositoryMock.Object);
+        var useCase = new UseCase.ListGenres(genreRepositoryMock.Object, categoryRepositoryMock.Object);
 
         UseCase.ListGenresOutput output = await useCase.Handle(input, CancellationToken.None);
 
@@ -117,7 +126,7 @@ public class ListGenreTest
     public async Task ListUsingDefaultInputValues()
     {
         var genreRepositoryMock = _fixture.GetRepositoryMock();
-
+        var categoryRepositoryMock = _fixture.GetCategoryRepositoryMock();
         var outputRepositorySearch = new SearchOutput<DomainEntity.Genre>(
                 currentPage: 1,
                 perPage: 15,
@@ -130,7 +139,7 @@ public class ListGenreTest
             It.IsAny<CancellationToken>()
             )).ReturnsAsync(outputRepositorySearch);
 
-        var useCase = new UseCase.ListGenres(genreRepositoryMock.Object);
+        var useCase = new UseCase.ListGenres(genreRepositoryMock.Object, categoryRepositoryMock.Object);
 
         UseCase.ListGenresOutput output = await useCase.Handle(new UseCase.ListGenresInput(), CancellationToken.None);
 

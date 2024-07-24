@@ -35,7 +35,7 @@ public class GetGrenreTest
         output.Categories.Should().HaveCount(exampleGenre.Categories.Count);
         foreach (var category in exampleGenre.Categories)
         {
-            output.Categories.Should().Contain(category);
+            output.Categories.Should().Contain(relation => relation.Id == category);
         }
         genreRepositoryMock.Verify(x => x.Get(It.Is<Guid>(x => x == exampleGenre.Id), 
             It.IsAny<CancellationToken>()), Times.Once);

@@ -113,7 +113,7 @@ public class UpdateGenreTest
         output.CreatedAt.Should().Be(exampleGenre.CreatedAt);
         output.Categories.Should().HaveCount(exampleCategoriresIds.Count);
         exampleCategoriresIds.ForEach(
-            expectedId => output.Categories.Should().Contain(expectedId)
+            expectedId => output.Categories.Should().Contain(relation => relation.Id == expectedId)
             );
         genreRepositoryMock.Verify(x => x.Get(exampleGenre.Id, It.IsAny<CancellationToken>()), Times.Once);
         genreRepositoryMock.Verify(x => x.Update(
@@ -154,7 +154,7 @@ public class UpdateGenreTest
         output.CreatedAt.Should().Be(exampleGenre.CreatedAt);
         output.Categories.Should().HaveCount(exampleCategoriresIds.Count);
         exampleCategoriresIds.ForEach(
-            expectedId => output.Categories.Should().Contain(expectedId)
+            expectedId => output.Categories.Should().Contain(relation => relation.Id == expectedId)
             );
         genreRepositoryMock.Verify(x => x.Get(exampleGenre.Id, It.IsAny<CancellationToken>()), Times.Once);
         genreRepositoryMock.Verify(x => x.Update(
@@ -191,7 +191,7 @@ public class UpdateGenreTest
         output.CreatedAt.Should().Be(exampleGenre.CreatedAt);
         output.Categories.Should().HaveCount(exampleCategoriresIds.Count);
         exampleCategoriresIds.ForEach(
-            expectedId => output.Categories.Should().Contain(expectedId)
+            expectedId => output.Categories.Should().Contain(relation => relation.Id == expectedId)
             );
         genreRepositoryMock.Verify(x => x.Get(exampleGenre.Id, It.IsAny<CancellationToken>()), Times.Once);
         genreRepositoryMock.Verify(x => x.Update(
@@ -207,8 +207,8 @@ public class UpdateGenreTest
         var genreRepositoryMock = _fixture.GetRepositoryMock();
         var categoryRepositoryMock = _fixture.GetCategoryRepositoryMock();
         var unitOfWorkMock = _fixture.GetUnitOfWorkMock();
-        var exampleCategoriresIds = _fixture.GetRamdoGuids();
-        var exampleGenre = _fixture.GetExampleGenra(categoriesIds: exampleCategoriresIds);
+        var exampleCategoriesIds = _fixture.GetRamdoGuids();
+        var exampleGenre = _fixture.GetExampleGenra(categoriesIds: exampleCategoriesIds);
         var newNameExample = _fixture.GetValidGenreName();
         var newIsActive = !exampleGenre.IsActive;
         genreRepositoryMock.Setup(x =>
@@ -244,7 +244,7 @@ public class UpdateGenreTest
         var unitOfWorkMock = _fixture.GetUnitOfWorkMock();
         var exampleGenre = _fixture.GetExampleGenra(categoriesIds: _fixture.GetRamdoGuids());
         var exampleNewCategoriesIds = _fixture.GetRamdoGuids(10);
-        var listReturnedByCategoryReopository = exampleNewCategoriesIds.
+        var listReturnedByCategoryRepository = exampleNewCategoriesIds.
             GetRange(0, exampleNewCategoriesIds.Count - 2);
         var IdsNotReturnedByCategoryRepository = exampleNewCategoriesIds.
             GetRange(exampleNewCategoriesIds.Count - 2, 2);
@@ -255,7 +255,7 @@ public class UpdateGenreTest
             .ReturnsAsync(exampleGenre);
         categoryRepositoryMock.Setup(x => x.GetIdsListByIds(It.IsAny<List<Guid>>(),
             It.IsAny<CancellationToken>()))
-            .ReturnsAsync(listReturnedByCategoryReopository);
+            .ReturnsAsync(listReturnedByCategoryRepository);
         var useCase = new UseCase.UpdateGenre(genreRepositoryMock.Object,
             unitOfWorkMock.Object,
             categoryRepositoryMock.Object);
@@ -267,8 +267,6 @@ public class UpdateGenreTest
 
         await action.Should().ThrowAsync<RelatedAggregateException>()
             .WithMessage($"Related category id (or ids) not found: {notFoundIdsAsString}.");
-
-        
     }
 
     [Fact(DisplayName = nameof(ThrowWhenNotFound))]

@@ -36,8 +36,8 @@ public class UpdateGenre : IUpdateGenre
             }
         }
         
-        await _unitOfWork.Commit(cancellationToken);
         await _genreRepository.Update(genre, cancellationToken);
+        await _unitOfWork.Commit(cancellationToken);
         return GenreModelOutput.FromGenre(genre);
     }
 

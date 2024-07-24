@@ -28,8 +28,6 @@ public class GenreRepositoryTestFixture
         return genre;
     }
 
-    public List<DomainEntity.Genre> GetExampleGenresListByNames(List<string> names)
-        => names.Select(name => GetExampleGenre(name: name)).ToList();
     
 
     public List<DomainEntity.Genre> GetExampleGenresList(int count = 10, bool gerarCategorias = true)
@@ -41,6 +39,8 @@ public class GenreRepositoryTestFixture
             return genre;
         }).ToList();
 
+    public List<DomainEntity.Genre> GetExampleGenresListByNames(List<string> names)
+        => names.Select(name => GetExampleGenre(name: name)).ToList();
 
     public List<Genre> CloneGenresListOrdered(List<Genre> genres, string orderBy, SearchOrder order)
     {

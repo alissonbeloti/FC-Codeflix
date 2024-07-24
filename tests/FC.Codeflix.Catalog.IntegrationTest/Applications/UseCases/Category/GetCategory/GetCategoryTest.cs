@@ -13,7 +13,7 @@ public class GetCategoryTest
         => _fixture = fixture;
 
     [Fact(DisplayName = nameof(GetCategory))]
-    [Trait("Integration/Application", "GetCategory - Use Cases")]
+    [Trait("Integration/Application", "Use Cases - GetCategory ")]
     public async Task GetCategory()
     {
         var dbContext = _fixture.CreateDbContext();
@@ -36,7 +36,7 @@ public class GetCategoryTest
     }
 
     [Fact(DisplayName = nameof(GetCategoryNotFoundExceptionWhenCategoryDoesntExists))]
-    [Trait("Integration/Application", "GetCategory - Use Cases")]
+    [Trait("Integration/Application", "Use Cases - GetCategory ")]
     public async Task GetCategoryNotFoundExceptionWhenCategoryDoesntExists()
     {
         var dbContext = _fixture.CreateDbContext();

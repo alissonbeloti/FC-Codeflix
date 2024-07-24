@@ -50,7 +50,6 @@ namespace FC.Codeflix.Catalog.Infra.Data.EF.Repositories
                     .Where(x => x.GenreId == genre.Id)
                     .Select(x => x.CategoryId).ToListAsync(cancellationToken);
                 categoryIds.ForEach(genre.AddCategory);
-            
             return genre;
         }
 
