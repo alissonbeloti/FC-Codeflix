@@ -5,6 +5,7 @@ namespace FC.Codeflix.Catalog.EndToEndTests.Api.Category.Common;
 
 public class CategoryBaseFixture : BaseFixture
 {
+    public CategoryPersitence Persistence;
     public CategoryBaseFixture()
     {
         Persistence = new CategoryPersitence(CreateDbContext());
@@ -12,7 +13,6 @@ public class CategoryBaseFixture : BaseFixture
     public bool GetRandoBoolean()
         => (new Random()).NextDouble() < 0.5;
 
-    public CategoryPersitence Persistence;
 
     public string GetInvalidShortName()
     {
