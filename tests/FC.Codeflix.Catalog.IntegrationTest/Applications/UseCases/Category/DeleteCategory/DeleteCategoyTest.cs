@@ -21,7 +21,7 @@ public class DeleteCategoyTest
     }
 
     [Fact(DisplayName = nameof(DeleteCategory))]
-    [Trait("Integration/Application", "DeleteCategory - UseCases")]
+    [Trait("Integration/Application", "UseCases - DeleteCategory")]
     private async Task DeleteCategory()
     {
         var dbContext = _fixture.CreateDbContext();
@@ -47,7 +47,7 @@ public class DeleteCategoyTest
     }
 
     [Fact(DisplayName = nameof(ThrowWhenCategoryNotFound))]
-    [Trait("Integration/Application", "DeleteCategory - UseCases")]
+    [Trait("Integration/Application", "UseCases - DeleteCategory")]
     private async Task ThrowWhenCategoryNotFound()
     {
         var dbContext = _fixture.CreateDbContext();

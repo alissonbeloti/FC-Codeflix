@@ -18,7 +18,7 @@ public class UpdateCategoryTest
         => _fixture = fixture;
 
     [Theory(DisplayName = nameof(UpdateCategory))]
-    [Trait("Integration/Application", "UpdateCategory - Use Cases")]
+    [Trait("Integration/Application", "Use Cases - UpdateCategory ")]
     [MemberData(
         nameof(UpdateCategoryTestDataGenerate.GetCategoriesToUpdate),
         parameters: 5, MemberType = typeof(UpdateCategoryTestDataGenerate))]
@@ -52,7 +52,7 @@ public class UpdateCategoryTest
     }
 
     [Theory(DisplayName = nameof(UpdateCategoryWithoutIsActive))]
-    [Trait("Integration/Application", "UpdateCategory - Use Cases")]
+    [Trait("Integration/Application", "Use Cases - UpdateCategory ")]
     [MemberData(
         nameof(UpdateCategoryTestDataGenerate.GetCategoriesToUpdate),
         parameters: 5, MemberType = typeof(UpdateCategoryTestDataGenerate))]
@@ -88,7 +88,7 @@ public class UpdateCategoryTest
     }
 
     [Theory(DisplayName = nameof(UpdateOnlyName))]
-    [Trait("Integration/Application", "UpdateCategory - Use Cases")]
+    [Trait("Integration/Application", "Use Cases - UpdateCategory ")]
     [MemberData(
         nameof(UpdateCategoryTestDataGenerate.GetCategoriesToUpdate),
         parameters: 5, MemberType = typeof(UpdateCategoryTestDataGenerate))]
@@ -124,7 +124,7 @@ public class UpdateCategoryTest
     }
 
     [Fact(DisplayName = nameof(ThrowsWhenNotFoundCategory))]
-    [Trait("Integration/Application", "UpdateCategory - Use Cases")]
+    [Trait("Integration/Application", "Use Cases - UpdateCategory ")]
     
     public async Task ThrowsWhenNotFoundCategory()
     {
@@ -145,7 +145,7 @@ public class UpdateCategoryTest
     }
 
     [Theory(DisplayName = nameof(UpdateThrowsWhenInstantiateDomainCategory))]
-    [Trait("Integration/Application", "UpdateCategory - Use Cases")]
+    [Trait("Integration/Application", "Use Cases - UpdateCategory ")]
     [MemberData(
         nameof(UpdateCategoryTestDataGenerate.GetInvalidInputs),
         parameters: 6, MemberType = typeof(UpdateCategoryTestDataGenerate))]

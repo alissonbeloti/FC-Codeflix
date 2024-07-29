@@ -21,7 +21,7 @@ public class CreateCategoryTest
     }
 
     [Fact(DisplayName = nameof(CreateCategoryOK))]
-    [Trait("Integration/Application", "CreateCategory - Use Cases")]
+    [Trait("Integration/Application", "Use Cases - CreateCategory")]
     private async Task CreateCategoryOK()
     {
         var dbContext = _fixture.CreateDbContext();
@@ -50,7 +50,7 @@ public class CreateCategoryTest
     }
 
     [Fact(DisplayName = nameof(CreateCategoryOnlyWithName))]
-    [Trait("Integration/Application", "CreateCategory - Use Cases")]
+    [Trait("Integration/Application", "Use Cases - CreateCategory")]
     public async Task CreateCategoryOnlyWithName()
     {
 
@@ -80,7 +80,7 @@ public class CreateCategoryTest
     }
 
     [Fact(DisplayName = nameof(CreateCategoryOnlyWithNameAndDescription))]
-    [Trait("Integration/Application", "CreateCategory - Use Cases")]
+    [Trait("Integration/Application", "Use Cases - CreateCategory")]
     public async Task CreateCategoryOnlyWithNameAndDescription()
     {
 
@@ -112,7 +112,7 @@ public class CreateCategoryTest
     }
 
     [Theory(DisplayName = nameof(ThrowWhenCantInstantiateCategory))]
-    [Trait("Integration/Application", "CreateCategory - Use Cases")]
+    [Trait("Integration/Application", "Use Cases - CreateCategory")]
     [MemberData(nameof(CreateCategoryTestDataGenerator.GetInvalidInputs),
         parameters: 6,
         MemberType = typeof(CreateCategoryTestDataGenerator))]

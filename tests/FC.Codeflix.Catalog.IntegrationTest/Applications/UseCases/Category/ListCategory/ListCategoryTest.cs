@@ -15,7 +15,7 @@ public class ListCategoryTest
         => _fixture = fixture;
 
     [Fact(DisplayName = nameof(SearchReturnsListAndTotal))]
-    [Trait("Integration/Application", "ListCategories - Use Cases")]
+    [Trait("Integration/Application", "Use Cases - ListCategories")]
     public async Task SearchReturnsListAndTotal()
     {
         CodeflixCatalogDbContext dbContext = _fixture.CreateDbContext();
@@ -48,7 +48,7 @@ public class ListCategoryTest
 
     }
     [Fact(DisplayName = nameof(SearchReturnsEmptyWhenEmpty))]
-    [Trait("Integration/Application", "ListCategories - Use Cases")]
+    [Trait("Integration/Application", "Use Cases - ListCategories")]
     public async Task SearchReturnsEmptyWhenEmpty()
     {
         CodeflixCatalogDbContext dbContext = _fixture.CreateDbContext();
@@ -68,7 +68,7 @@ public class ListCategoryTest
     }
 
     [Theory(DisplayName = nameof(SearchReturnsPaginated))]
-    [Trait("Integration/Application", "ListCategories - Use Cases")]
+    [Trait("Integration/Application", "Use Cases - ListCategories")]
     [InlineData(10, 1, 5, 5)]
     [InlineData(10, 2, 5, 5)]
     [InlineData(7, 2, 5, 2)]
@@ -106,7 +106,7 @@ public class ListCategoryTest
     }
 
     [Theory(DisplayName = nameof(SearchByText))]
-    [Trait("Integration/Application", "ListCategories - Use Cases")]
+    [Trait("Integration/Application", "Use Cases - ListCategories")]
     [InlineData("Action", 1, 5, 1, 1)]
     [InlineData("Horror", 1, 5, 3, 3)]
     [InlineData("Horror", 2, 5, 0, 3)]
@@ -162,7 +162,7 @@ public class ListCategoryTest
     }
 
     [Theory(DisplayName = nameof(SearchOrdered))]
-    [Trait("Integration/Application", "ListCategories - Use Cases")]
+    [Trait("Integration/Application", "Use Cases - ListCategories")]
     [InlineData("name", "asc")]
     [InlineData("name", "desc")]
     [InlineData("id", "asc")]
