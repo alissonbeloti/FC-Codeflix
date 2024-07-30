@@ -1,5 +1,7 @@
 ﻿using Bogus;
 
+using FC.Codeflix.Catalog.Domain.Entity;
+using FC.Codeflix.Catalog.Domain.Enum;
 using FC.Codeflix.Catalog.Infra.Data.EF.Configurations;
 
 using Microsoft.EntityFrameworkCore;
@@ -57,6 +59,11 @@ public class BaseFixture
 
         return categoryName;
     }
+    public string GetValidName()
+        => Faker.Name.FullName();
+
+    public CastMemberType GetRandomCastMemberType()
+        => (CastMemberType)(new Random()).Next(1, 2);
 
     public string GetValidCategoryDescription()
     {
@@ -68,4 +75,12 @@ public class BaseFixture
         }
         return categoryDescription;
     }
+
+    public CastMember GetExampleCastMember(string? name = null)
+      => new CastMember(
+          name ?? GetValidName(),
+          GetRandomCastMemberType());
+
+    internal List<CastMember> GetExampleCastMemberList(int count)
+        => Enumerable.Range(1, count).Select(_ => GetExampleCastMember()).ToList();
 }
