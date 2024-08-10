@@ -4,7 +4,9 @@ using FC.Codeflix.Catalog.Domain.SeedWork.SearchableRepository;
 
 namespace FC.Codeflix.Catalog.Domain.Repository;
 
-public interface ICastMemberRepository : IGenericRepository<CastMember>, 
+public interface ICastMemberRepository : IGenericRepository<CastMember>,
     ISearchableRepository<CastMember>
 {
+    public Task<IReadOnlyList<Guid>> GetIdsListByIds(
+       List<Guid> ids, CancellationToken cancellationToken);
 }

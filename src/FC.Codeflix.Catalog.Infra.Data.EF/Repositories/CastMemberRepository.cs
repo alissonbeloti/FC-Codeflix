@@ -24,7 +24,12 @@ namespace FC.Codeflix.Catalog.Infra.Data.EF.Repositories
             NotFoundException.ThrowIfNull(castMember, $"CastMember '{id}' not found.");
             return castMember!;
         }
-        
+
+        public async Task<IReadOnlyList<Guid>> GetIdsListByIds(List<Guid> ids, CancellationToken cancellationToken)
+         => (await castMembers.AsNoTracking().Where(castmember => ids.Contains(castmember.Id))
+            .Select(cast => cast.Id)
+            .ToListAsync(cancellationToken))
+            .AsReadOnly();
 
         public async Task Insert(CastMember aggregate, CancellationToken cancellationToken) 
             => await castMembers.AddAsync(aggregate, cancellationToken);
