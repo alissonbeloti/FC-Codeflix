@@ -72,4 +72,11 @@ public abstract class VideoTestFixtureBase: BaseFixture
         var fileInput = new FileInput("jpg", exampleStream);
         return fileInput;
     }
+
+    internal FileInput GetValidMediaFileInput()
+    {
+        var exampleStream = new MemoryStream(Encoding.ASCII.GetBytes("teste"));
+        var fileInput = new FileInput("mp4", exampleStream);
+        return fileInput;
+    }
 }
