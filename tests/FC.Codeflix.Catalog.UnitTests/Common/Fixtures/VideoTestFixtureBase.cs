@@ -47,6 +47,35 @@ public abstract class VideoTestFixtureBase: BaseFixture
             GetRandomRationg()
         );
 
+    public DomainEntity.Video GetValidVideoWithAllProperties()
+    {
+        var video = new DomainEntity.Video(
+                GetValidTitle(),
+                GetValidDescription(),
+                GetRandoBoolean(),
+                GetRandoBoolean(),
+                GetValidYearLaunched(),
+                GetValidDuration(),
+                GetRandomRationg()
+            );
+
+        video.UpdateBanner(GetValidImagePath());
+        video.UpdateThumb(GetValidImagePath());
+        video.UpdateThumbHalf(GetValidImagePath());
+        video.UpdateMedia(GetValidMediaPath());
+        video.UpdateTrailer(GetValidMediaPath());
+
+        var random = new Random();
+        Enumerable.Range(1, random.Next(2, 5)).ToList()
+            .ForEach(_ => video.AddCastMember(Guid.NewGuid()));
+        Enumerable.Range(1, random.Next(2, 5)).ToList()
+            .ForEach(_ => video.AddCategory(Guid.NewGuid()));
+        Enumerable.Range(1, random.Next(2, 5)).ToList()
+            .ForEach(_ => video.AddGenre(Guid.NewGuid()));
+
+        return video;
+    }
+
     public Rating GetRandomRationg()
     {
         var values = Enum.GetValues<Rating>();

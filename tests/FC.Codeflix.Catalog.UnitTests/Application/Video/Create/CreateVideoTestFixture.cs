@@ -15,7 +15,9 @@ public class CreateVideoTestFixture : VideoTestFixtureBase
         List<Guid>? castMembersIds = null,
         FileInput? thumb = null,
         FileInput? banner = null,
-        FileInput? thumbHalf = null
+        FileInput? thumbHalf = null,
+        FileInput? media = null,
+        FileInput? trailer = null
         ) =>
         new (
             GetValidTitle(),
@@ -30,7 +32,9 @@ public class CreateVideoTestFixture : VideoTestFixtureBase
             castMembersIds,
             thumb,
             banner,
-            thumbHalf
+            thumbHalf,
+            media,
+            trailer
         );
     internal CreateVideoInput CreateValidInputAllData(
         List<Guid>? categoriesIds = null,
@@ -55,4 +59,23 @@ public class CreateVideoTestFixture : VideoTestFixtureBase
             GetValidImageFileInput(),
             GetValidImageFileInput()
         );
+
+    internal CreateVideoInput CreateValidInputAllMedias()
+    =>
+        new(
+            GetValidTitle(),
+            GetValidDescription(),
+            GetRandomRationg(),
+            GetValidYearLaunched(),
+            GetRandoBoolean(),
+            GetValidDuration(),
+            GetRandoBoolean(),
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            GetValidMediaFileInput(),
+            GetValidMediaFileInput());
 }

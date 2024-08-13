@@ -31,6 +31,11 @@ namespace FC.Codeflix.Catalog.Infra.Data.EF.Repositories
             .ToListAsync(cancellationToken))
             .AsReadOnly();
 
+        public Task<IReadOnlyList<CastMember>> GetListByIds(List<Guid> ids, CancellationToken cancellationToken)
+        {
+            throw new NotImplementedException();
+        }
+
         public async Task Insert(CastMember aggregate, CancellationToken cancellationToken) 
             => await castMembers.AddAsync(aggregate, cancellationToken);
 

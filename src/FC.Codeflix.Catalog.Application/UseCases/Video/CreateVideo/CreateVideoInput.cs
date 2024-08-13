@@ -17,5 +17,7 @@ public record CreateVideoInput(
     IReadOnlyCollection<Guid>? CastMembersIds = null,
     FileInput? Thumb = null,
     FileInput? Banner = null,
-    FileInput? ThumbHalf = null) 
-    : IRequest<CreateVideoOutput>;
+    FileInput? ThumbHalf = null,
+    FileInput? Media = null,
+    FileInput? Trailer = null) 
+    : IRequest<VideoModelOutput>;

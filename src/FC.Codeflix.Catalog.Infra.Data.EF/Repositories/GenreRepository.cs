@@ -119,5 +119,10 @@ namespace FC.Codeflix.Catalog.Infra.Data.EF.Repositories
             .Select(genre => genre.Id)
             .ToListAsync(cancellationToken))
             .AsReadOnly();
+
+        public Task<IReadOnlyList<Genre>> GetListByIds(List<Guid> ids, CancellationToken cancellationToken)
+        {
+            throw new NotImplementedException();
+        }
     }
 }
