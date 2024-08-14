@@ -51,7 +51,8 @@ public class Video: AggregateRoot
     public void Validate(ValidationHandler handler) 
         => new VideoValidator(this, handler).Validate();
 
-    public void Update(string title, string description, bool opened, bool published, int yearLaunched, int duration)
+    public void Update(string title, string description, bool opened, 
+        bool published, int yearLaunched, int duration, Rating? rating = null)
     {
         Title = title;
         Description = description;
@@ -59,6 +60,9 @@ public class Video: AggregateRoot
         Published = published;
         YearLaunched = yearLaunched;
         Duration = duration;
+        if (rating is not null) {
+            Rating = rating.Value;
+        }
     }
 
     public void UpdateThumb(string validImagePath) => 

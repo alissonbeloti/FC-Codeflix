@@ -16,7 +16,7 @@ public class CreateCategoryTest
 
 
     [Fact(DisplayName = nameof(CreateCategory))]
-    [Trait("Application", "Category - Use Cases")]
+    [Trait("Application", "CreateCategory - Use Cases")]
     public async void CreateCategory()
     {
 

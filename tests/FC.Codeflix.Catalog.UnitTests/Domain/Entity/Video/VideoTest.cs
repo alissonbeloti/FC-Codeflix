@@ -72,6 +72,51 @@ public class VideoTest(VideoTestFixture fixture)
 
     }
 
+    [Fact(DisplayName = nameof(UpdateWithRating))]
+    [Trait("Domain", "Video - Aggregates")]
+    public void UpdateWithRating()
+    {
+        var title = fixture.GetValidTitle();
+        var description = fixture.GetValidDescription();
+        var opened = fixture.GetRandoBoolean();
+        var published = fixture.GetRandoBoolean();
+        var yearLaunched = fixture.GetValidYearLaunched();
+        var duration = fixture.GetValidDuration();
+        var expectedRating = fixture.GetRandomRationg();
+        var video = fixture.GetValidVideo();
+
+        video.Update(
+            title, description, opened, published, yearLaunched, duration,
+            expectedRating);
+
+        video.Title.Should().Be(title);
+        video.Description.Should().Be(description);
+        video.Opened.Should().Be(opened);
+        video.Published.Should().Be(published);
+        video.YearLaunched.Should().Be(yearLaunched);
+        video.Duration.Should().Be(duration);
+        video.Rating.Should().Be(expectedRating);
+    }
+
+    [Fact(DisplayName = nameof(UpdateWithoutRatingDoesntTheRating))]
+    [Trait("Domain", "Video - Aggregates")]
+    public void UpdateWithoutRatingDoesntTheRating()
+    {
+        var title = fixture.GetValidTitle();
+        var description = fixture.GetValidDescription();
+        var opened = fixture.GetRandoBoolean();
+        var published = fixture.GetRandoBoolean();
+        var yearLaunched = fixture.GetValidYearLaunched();
+        var duration = fixture.GetValidDuration();
+        var video = fixture.GetValidVideo();
+        var expectedRating = video.Rating;
+
+        video.Update(
+            title, description, opened, published, yearLaunched, duration);
+
+        video.Rating.Should().Be(expectedRating);
+    }
+
     [Fact(DisplayName = nameof(ValidateStillValidatingAfterUpdateToValidState))]
     [Trait("Domain", "Video - Aggregates")]
     public void ValidateStillValidatingAfterUpdateToValidState()
