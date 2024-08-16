@@ -46,10 +46,10 @@ namespace FC.Codeflix.Catalog.Infra.Data.EF.Repositories
         {
             var genre = await _genres.AsNoTracking().SingleOrDefaultAsync(g => g.Id == id, cancellationToken);
             NotFoundException.ThrowIfNull(genre, $"Genre '{id}' not found.");
-                var categoryIds = await _genresCategories.AsNoTracking()
-                    .Where(x => x.GenreId == genre.Id)
-                    .Select(x => x.CategoryId).ToListAsync(cancellationToken);
-                categoryIds.ForEach(genre.AddCategory);
+            var categoryIds = await _genresCategories.AsNoTracking()
+                .Where(x => x.GenreId == genre.Id)
+                .Select(x => x.CategoryId).ToListAsync(cancellationToken);
+            categoryIds.ForEach(genre.AddCategory);
             return genre;
         }
 
@@ -72,10 +72,12 @@ namespace FC.Codeflix.Catalog.Infra.Data.EF.Repositories
                 .Where(relation => genresIds.Contains(relation.GenreId))
                 .ToListAsync(cancellationToken);
             var relationsByGenreIdGroup = relations.GroupBy(x => x.GenreId).ToList();
-            relationsByGenreIdGroup.ForEach(relationGroup => {
+            relationsByGenreIdGroup.ForEach(relationGroup =>
+            {
                 var genre = genres.Find(genre => genre.Id == relationGroup.Key);
                 if (genre is null) return;
-                relationGroup.ToList().ForEach(relation => {
+                relationGroup.ToList().ForEach(relation =>
+                {
                     genre.AddCategory(relation.CategoryId);
                 });
             });
@@ -120,9 +122,9 @@ namespace FC.Codeflix.Catalog.Infra.Data.EF.Repositories
             .ToListAsync(cancellationToken))
             .AsReadOnly();
 
-        public Task<IReadOnlyList<Genre>> GetListByIds(List<Guid> ids, CancellationToken cancellationToken)
-        {
-            throw new NotImplementedException();
-        }
+        public async Task<IReadOnlyList<Genre>> GetListByIds(List<Guid> ids, CancellationToken cancellationToken)
+       => (await _genres.AsNoTracking().Where(genre => ids.Contains(genre.Id))
+            .ToListAsync(cancellationToken))
+            .AsReadOnly();
     }
 }

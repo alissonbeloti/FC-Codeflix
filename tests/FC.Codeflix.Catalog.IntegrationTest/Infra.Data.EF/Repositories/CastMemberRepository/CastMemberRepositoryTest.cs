@@ -301,6 +301,117 @@ public class CastMemberRepositoryTest(CastMemberRepositoryTestFixture fixture)
         searchResult.CurrentPage.Should().Be(1);
         searchResult.PerPage.Should().Be(20);
     }
+
+    [Fact(DisplayName = nameof(GetIdsListByIdsWhenOnlyThreeIdsMatch))]
+    [Trait("Integration/Infra.Data", "Repositories - CastMemberRepository")]
+    public async Task GetIdsListByIdsWhenOnlyThreeIdsMatch()
+    {
+        var arrangeDbContext = fixture.CreateDbContext();
+        var exampleCastMemberList = fixture.GetExampleCastMemberList(10);
+        await arrangeDbContext.AddRangeAsync(exampleCastMemberList);
+        await arrangeDbContext.SaveChangesAsync(CancellationToken.None);
+        var actDbContext = fixture.CreateDbContext(true);
+        var repository = new Repository.CastMemberRepository(actDbContext);
+        var idsToGet = new List<Guid>()
+        {
+            exampleCastMemberList[3].Id,
+            exampleCastMemberList[4].Id,
+            exampleCastMemberList[5].Id,
+            Guid.NewGuid(),
+            Guid.NewGuid(),
+        };
+        var idsExpectedToReturn = new List<Guid>()
+        {
+            exampleCastMemberList[3].Id,
+            exampleCastMemberList[4].Id,
+            exampleCastMemberList[5].Id,
+        };
+
+        var result = await repository.GetIdsListByIds(idsToGet, CancellationToken.None);
+
+        result.ToList().Should().HaveCount(3);
+        result.ToList().Should().NotBeEquivalentTo(idsToGet);
+        result.ToList().Should().BeEquivalentTo(idsExpectedToReturn);
+    }
+
+    [Fact(DisplayName = nameof(GetListByIds))]
+    [Trait("Integration/Infra.Data", "Repositories - CastMemberRepository")]
+    public async Task GetListByIds()
+    {
+        var arrangeDbContext = fixture.CreateDbContext();
+        var exampleCastMemberList = fixture.GetExampleCastMemberList(10);
+        await arrangeDbContext.AddRangeAsync(exampleCastMemberList);
+        await arrangeDbContext.SaveChangesAsync(CancellationToken.None);
+        var actDbContext = fixture.CreateDbContext(true);
+        var repository = new Repository.CastMemberRepository(actDbContext);
+        var idsToGet = new List<Guid>()
+        {
+            exampleCastMemberList[3].Id,
+            exampleCastMemberList[4].Id,
+            exampleCastMemberList[5].Id,
+        };
+
+        var result = await repository.GetListByIds(idsToGet, CancellationToken.None);
+
+        result.Should().NotBeNull();
+        result.ToList().Should().HaveCount(idsToGet.Count);
+        idsToGet.ForEach(id =>
+        {
+            var example = exampleCastMemberList.FirstOrDefault(x => x.Id == id);
+            var resultItem = result.FirstOrDefault(x => x.Id == id);
+            resultItem.Should().NotBeNull();
+            example.Should().NotBeNull();
+            resultItem!.Name.Should().Be(example!.Name);
+            resultItem.Id.Should().Be(example.Id);
+            resultItem.Type.Should().Be(example.Type);
+            resultItem.CreatedAt.Should().Be(example.CreatedAt);
+        });
+
+    }
+
+    [Fact(DisplayName = nameof(GetListByIdsWhenThreeMatch))]
+    [Trait("Integration/Infra.Data", "Repositories - CastMemberRepository")]
+    public async Task GetListByIdsWhenThreeMatch()
+    {
+        var arrangeDbContext = fixture.CreateDbContext();
+        var exampleCasMemberList = fixture.GetExampleCastMemberList(10);
+        await arrangeDbContext.AddRangeAsync(exampleCasMemberList);
+        await arrangeDbContext.SaveChangesAsync(CancellationToken.None);
+        var actDbContext = fixture.CreateDbContext(true);
+        var repository = new Repository.CastMemberRepository(actDbContext);
+        var idsToGet = new List<Guid>()
+        {
+            exampleCasMemberList[3].Id,
+            exampleCasMemberList[4].Id,
+            exampleCasMemberList[5].Id,
+            Guid.NewGuid(),
+            Guid.NewGuid(),
+        };
+        var expectedIdsToReturn = new List<Guid>()
+        {
+            exampleCasMemberList[3].Id,
+            exampleCasMemberList[4].Id,
+            exampleCasMemberList[5].Id,
+        };
+
+        var result = await repository.GetListByIds(idsToGet, CancellationToken.None);
+
+        result.Should().NotBeNull();
+        result.ToList().Should().HaveCount(expectedIdsToReturn.Count);
+        expectedIdsToReturn.ForEach(id =>
+        {
+            var example = exampleCasMemberList.FirstOrDefault(x => x.Id == id);
+            var resultItem = result.FirstOrDefault(x => x.Id == id);
+            resultItem.Should().NotBeNull();
+            example.Should().NotBeNull();
+            resultItem!.Name.Should().Be(example!.Name);
+            resultItem.Id.Should().Be(example.Id);
+            resultItem.Type.Should().Be(example.Type);
+            resultItem.CreatedAt.Should().Be(example.CreatedAt);
+
+        });
+
+    }
 }
 
 

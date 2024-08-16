@@ -14,7 +14,7 @@ public class MediaTest(VideoTestFixture fixture)
         var expectedFilePath = fixture.GetValidMediaPath();
 
         var media = new Media(expectedFilePath);
-
+        media.Id.Should().NotBeEmpty();
         media.FilePath.Should().Be(expectedFilePath);
         media.Status.Should().Be(MediaStatus.Pending);
     }
