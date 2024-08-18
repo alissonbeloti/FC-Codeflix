@@ -12,5 +12,6 @@ internal class CategoryConfiguration
         builder.HasKey(c => c.Id);
         builder.Property(c => c.Name).HasMaxLength(255);
         builder.Property(c => c.Description).HasMaxLength(10_000);
+        builder.Ignore(c => c.Events);
     }
 }

@@ -8,6 +8,9 @@ using ApplicationUseCases = FC.Codeflix.Catalog.Application.UseCases.Genre.Creat
 using FC.Codeflix.Catalog.Infra.Data.EF.Models;
 using Microsoft.EntityFrameworkCore;
 using FC.Codeflix.Catalog.Application.Exceptions;
+using FC.Codeflix.Catalog.Application;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 
 namespace FC.Codeflix.Catalog.IntegrationTest.Applications.UseCases.Genre.CreateGenre;
 
@@ -27,7 +30,12 @@ public class CreateGenreTest
         CodeflixCatalogDbContext actDbContext = _fixture.CreateDbContext();
         GenreRepository genreRepository = new(actDbContext);
         CategoryRepository categoryRepository = new(actDbContext);
-        UnitOfWork unitOfWork = new(actDbContext);
+        var serviceCollection = new ServiceCollection();
+        serviceCollection.AddLogging();
+        var serviceProvider = serviceCollection.BuildServiceProvider();
+        var eventPublisher = new DomainEventPublisher(serviceProvider);
+        var unitOfWork = new UnitOfWork(actDbContext, eventPublisher,
+            serviceProvider.GetRequiredService<ILogger<UnitOfWork>>());
         ApplicationUseCases.CreateGenre useCase = new(genreRepository, unitOfWork, categoryRepository);
 
         GenreModelOutput output = await useCase.Handle(input, CancellationToken.None);
@@ -63,7 +71,12 @@ public class CreateGenreTest
         CodeflixCatalogDbContext actDbContext = _fixture.CreateDbContext(true);
         GenreRepository genreRepository = new(actDbContext);
         CategoryRepository categoryRepository = new(actDbContext);
-        UnitOfWork unitOfWork = new(actDbContext);
+        var serviceCollection = new ServiceCollection();
+        serviceCollection.AddLogging();
+        var serviceProvider = serviceCollection.BuildServiceProvider();
+        var eventPublisher = new DomainEventPublisher(serviceProvider);
+        var unitOfWork = new UnitOfWork(actDbContext, eventPublisher,
+            serviceProvider.GetRequiredService<ILogger<UnitOfWork>>());
         ApplicationUseCases.CreateGenre useCase = new(genreRepository, unitOfWork, categoryRepository);
 
         GenreModelOutput output = await useCase.Handle(input, CancellationToken.None);
@@ -107,7 +120,12 @@ public class CreateGenreTest
         CodeflixCatalogDbContext actDbContext = _fixture.CreateDbContext(true);
         GenreRepository genreRepository = new(actDbContext);
         CategoryRepository categoryRepository = new(actDbContext);
-        UnitOfWork unitOfWork = new(actDbContext);
+        var serviceCollection = new ServiceCollection();
+        serviceCollection.AddLogging();
+        var serviceProvider = serviceCollection.BuildServiceProvider();
+        var eventPublisher = new DomainEventPublisher(serviceProvider);
+        var unitOfWork = new UnitOfWork(actDbContext, eventPublisher,
+            serviceProvider.GetRequiredService<ILogger<UnitOfWork>>());
         ApplicationUseCases.CreateGenre useCase = new(genreRepository, unitOfWork, categoryRepository);
 
         Func<Task<GenreModelOutput>> action = async () => await useCase

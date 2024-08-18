@@ -1,4 +1,5 @@
-﻿using FC.Codeflix.Catalog.Application.Exceptions;
+﻿using FC.Codeflix.Catalog.Application;
+using FC.Codeflix.Catalog.Application.Exceptions;
 using FC.Codeflix.Catalog.Infra.Data.EF;
 using FC.Codeflix.Catalog.Infra.Data.EF.Models;
 using FC.Codeflix.Catalog.Infra.Data.EF.Repositories;
@@ -6,6 +7,8 @@ using FC.Codeflix.Catalog.Infra.Data.EF.Repositories;
 using FluentAssertions;
 
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 
 using UseCase = FC.Codeflix.Catalog.Application.UseCases.Genre.DeleteGenre;
 namespace FC.Codeflix.Catalog.IntegrationTest.Applications.UseCases.Genre.DeleteGenre;
@@ -28,8 +31,14 @@ public class DeleteGenreTest
         await dbArrangeContext.Genres.AddRangeAsync(genresExampleList);
         await dbArrangeContext.SaveChangesAsync();
         var actDbContext = _fixture.CreateDbContext(true);
+        var serviceCollection = new ServiceCollection();
+        serviceCollection.AddLogging();
+        var serviceProvider = serviceCollection.BuildServiceProvider();
+        var eventPublisher = new DomainEventPublisher(serviceProvider);
+        var unitOfWork = new UnitOfWork(actDbContext, eventPublisher,
+            serviceProvider.GetRequiredService<ILogger<UnitOfWork>>());
         var useCase = new UseCase.DeleteGenre(
-            new GenreRepository(actDbContext), new UnitOfWork(actDbContext)
+            new GenreRepository(actDbContext), unitOfWork
             );
         var input = new UseCase.DeleteGenreInput(targetGenre.Id);
 
@@ -56,8 +65,14 @@ public class DeleteGenreTest
         await dbArrangeContext.GenresCategories.AddRangeAsync(relations);
         await dbArrangeContext.SaveChangesAsync();
         var actDbContext = _fixture.CreateDbContext(true);
+        var serviceCollection = new ServiceCollection();
+        serviceCollection.AddLogging();
+        var serviceProvider = serviceCollection.BuildServiceProvider();
+        var eventPublisher = new DomainEventPublisher(serviceProvider);
+        var unitOfWork = new UnitOfWork(actDbContext, eventPublisher,
+            serviceProvider.GetRequiredService<ILogger<UnitOfWork>>());
         var useCase = new UseCase.DeleteGenre(
-            new GenreRepository(actDbContext), new UnitOfWork(actDbContext)
+            new GenreRepository(actDbContext), unitOfWork
             );
         var input = new UseCase.DeleteGenreInput(targetGenre.Id);
 
@@ -83,8 +98,14 @@ public class DeleteGenreTest
         await dbArrangeContext.Genres.AddRangeAsync(genresExampleList);
         await dbArrangeContext.SaveChangesAsync();
         var actDbContext = _fixture.CreateDbContext(true);
+        var serviceCollection = new ServiceCollection();
+        serviceCollection.AddLogging();
+        var serviceProvider = serviceCollection.BuildServiceProvider();
+        var eventPublisher = new DomainEventPublisher(serviceProvider);
+        var unitOfWork = new UnitOfWork(actDbContext, eventPublisher,
+            serviceProvider.GetRequiredService<ILogger<UnitOfWork>>());
         var useCase = new UseCase.DeleteGenre(
-            new GenreRepository(actDbContext), new UnitOfWork(actDbContext)
+            new GenreRepository(actDbContext), unitOfWork
             );
         var input = new UseCase.DeleteGenreInput(randomGuid);
 

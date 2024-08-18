@@ -11,6 +11,7 @@ internal class VideoConfiguration : IEntityTypeConfiguration<Video>
         builder.Property(v => v.Id).ValueGeneratedNever();
         builder.Property(v => v.Title).HasMaxLength(255);
         builder.Property(v => v.Description).HasMaxLength(4_000);
+        builder.Ignore(v => v.Events);
         //AutoInclude
         builder.Navigation(x => x.Media).AutoInclude();
         builder.Navigation(x => x.Trailer).AutoInclude();

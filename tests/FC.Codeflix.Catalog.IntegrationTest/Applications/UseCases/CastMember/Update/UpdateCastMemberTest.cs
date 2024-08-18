@@ -7,6 +7,9 @@ using Microsoft.EntityFrameworkCore;
 using FC.Codeflix.Catalog.Application.UseCases.CastMember.UpdateCastMember;
 using FluentAssertions;
 using FC.Codeflix.Catalog.Application.Exceptions;
+using FC.Codeflix.Catalog.Application;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 
 namespace FC.Codeflix.Catalog.IntegrationTest.Applications.UseCases.CastMember.Update;
 [Collection(nameof(CastMemberUseCaseBaseFixture))]
@@ -24,8 +27,14 @@ public class UpdateCastMemberTest(CastMemberUseCaseBaseFixture fixture)
         await arrangeDbContext.AddRangeAsync(examples);
         await arrangeDbContext.SaveChangesAsync();
         var actDbContext = fixture.CreateDbContext(true);
+        var serviceCollection = new ServiceCollection();
+        serviceCollection.AddLogging();
+        var serviceProvider = serviceCollection.BuildServiceProvider();
+        var eventPublisher = new DomainEventPublisher(serviceProvider);
+        var unitOfWork = new UnitOfWork(actDbContext, eventPublisher,
+            serviceProvider.GetRequiredService<ILogger<UnitOfWork>>());
         var useCase = new UpdateCastMember(new CastMemberRepository(actDbContext),
-            new UnitOfWork(actDbContext));
+            unitOfWork);
         var input = new UpdateCastMemberInput(example.Id, newName, newType);
 
         var output = await useCase.Handle(input, CancellationToken.None);
@@ -57,8 +66,14 @@ public class UpdateCastMemberTest(CastMemberUseCaseBaseFixture fixture)
         var newType = fixture.GetRandomCastMemberType();
         
         var actDbContext = fixture.CreateDbContext(true);
+        var serviceCollection = new ServiceCollection();
+        serviceCollection.AddLogging();
+        var serviceProvider = serviceCollection.BuildServiceProvider();
+        var eventPublisher = new DomainEventPublisher(serviceProvider);
+        var unitOfWork = new UnitOfWork(actDbContext, eventPublisher,
+            serviceProvider.GetRequiredService<ILogger<UnitOfWork>>());
         var useCase = new UpdateCastMember(new CastMemberRepository(actDbContext),
-            new UnitOfWork(actDbContext));
+            unitOfWork);
         var input = new UpdateCastMemberInput(example.Id, newName, newType);
 
         var action = async () => await useCase.Handle(input, CancellationToken.None);

@@ -247,6 +247,7 @@ public class VideoTest(VideoTestFixture fixture)
 
         validMedia.Media.Should().NotBeNull();
         validMedia.Media!.FilePath.Should().Be(validPath);
+        validMedia.Events.Should().HaveCount(1);
     }
 
     [Fact(DisplayName = nameof(UpdateTrailer))]

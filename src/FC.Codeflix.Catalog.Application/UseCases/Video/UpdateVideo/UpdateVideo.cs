@@ -69,21 +69,27 @@ public class UpdateVideo (IVideoRepository videoRepository,
             var fileName = StorageName.Create(video.Id, nameof(video.Thumb), request.Thumb.Extension);
             var thumbUrl = await storageService.Upload(
                 fileName,
-                request.Thumb.FileStream, cancellationToken);
+                request.Thumb.FileStream,
+                request.Thumb.ContentType,
+                cancellationToken);
             video.UpdateThumb(thumbUrl);
         }
         if (request.Banner is not null)
         {
             var fileName = StorageName.Create(video.Id, nameof(video.Banner), request.Banner.Extension);
             var bannerUrl = await storageService.Upload(fileName,
-                request.Banner.FileStream, cancellationToken);
+                request.Banner.FileStream, 
+                request.Banner.ContentType,
+                cancellationToken);
             video.UpdateBanner(bannerUrl);
         }
         if (request.ThumbHalf is not null)
         {
             var fileName = StorageName.Create(video.Id, nameof(video.ThumbHalf), request.ThumbHalf.Extension);
             var thumbHalfUrl = await storageService.Upload(fileName,
-                request.ThumbHalf.FileStream, cancellationToken);
+                request.ThumbHalf.FileStream, 
+                request.ThumbHalf.ContentType,
+                cancellationToken);
             video.UpdateThumbHalf(thumbHalfUrl);
         }
     }

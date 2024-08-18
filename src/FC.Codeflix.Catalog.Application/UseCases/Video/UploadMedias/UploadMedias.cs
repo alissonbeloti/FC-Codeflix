@@ -41,8 +41,10 @@ public class UploadMedias(IVideoRepository videoRepository,
         if (request.TrailerInput is not null)
         {
             var uploadedFilePath = await storageService.Upload(
-                StorageName.Create(video.Id, nameof(video.Trailer), request.TrailerInput.Extension),
+                StorageName.Create(video.Id, nameof(video.Trailer), 
+                request.TrailerInput.Extension),
                 request.TrailerInput.FileStream,
+                request.TrailerInput.ContentType,
                 cancellationToken);
             video.UpdateTrailer(uploadedFilePath);
         }
@@ -55,6 +57,7 @@ public class UploadMedias(IVideoRepository videoRepository,
             var uploadedFilePath = await storageService.Upload(
                 StorageName.Create(video.Id, nameof(video.Media), request.VideoInput.Extension),
                 request.VideoInput.FileStream,
+                request.VideoInput.ContentType,
                 cancellationToken);
             video.UpdateMedia(uploadedFilePath);
         }

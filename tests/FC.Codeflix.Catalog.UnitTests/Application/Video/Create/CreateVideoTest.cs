@@ -64,6 +64,7 @@ public class CreateVideoTest(CreateVideoTestFixture fixture)
         var storageServiceMock = new Mock<IStorageService>();
         var expectedThumbName = $"thumb.jpg";
         storageServiceMock.Setup(x => x.Upload(It.IsAny<string>(), It.IsAny<Stream>(),
+            It.IsAny<string>(),
             It.IsAny<CancellationToken>()))
             .ReturnsAsync(expectedThumbName);
         var useCase = new UseCase.CreateVideo(repositoryMock.Object,
@@ -111,6 +112,7 @@ public class CreateVideoTest(CreateVideoTestFixture fixture)
         var storageServiceMock = new Mock<IStorageService>();
         var expectedBannerName = $"banner.jpg";
         storageServiceMock.Setup(x => x.Upload(It.IsAny<string>(), It.IsAny<Stream>(),
+            It.IsAny<string>(),
             It.IsAny<CancellationToken>()))
             .ReturnsAsync(expectedBannerName);
         var useCase = new UseCase.CreateVideo(repositoryMock.Object,
@@ -159,6 +161,7 @@ public class CreateVideoTest(CreateVideoTestFixture fixture)
         var storageServiceMock = new Mock<IStorageService>();
         var expectedThumbHalfName = $"thumb-half.jpg";
         storageServiceMock.Setup(x => x.Upload(It.IsAny<string>(), It.IsAny<Stream>(),
+            It.IsAny<string>(),
             It.IsAny<CancellationToken>()))
             .ReturnsAsync(expectedThumbHalfName);
         var useCase = new UseCase.CreateVideo(repositoryMock.Object,
@@ -226,18 +229,21 @@ public class CreateVideoTest(CreateVideoTestFixture fixture)
         storageServiceMock.Setup(x => x.Upload(
             It.Is<string>(y => y.EndsWith("-banner.jpg")),
             It.IsAny<Stream>(),
+            It.IsAny<string>(),
             It.IsAny<CancellationToken>()))
             .ReturnsAsync(expectedBannerName);
         var expectedThumbName = $"thumb.jpg";
         storageServiceMock.Setup(x => x.Upload(
             It.Is<string>(y => y.EndsWith("-thumb.jpg")),
             It.IsAny<Stream>(),
+            It.IsAny<string>(),
             It.IsAny<CancellationToken>()))
             .ReturnsAsync(expectedThumbName);
         var expectedThumbHalfName = $"thumbhalf.jpg";
         storageServiceMock.Setup(x => x.Upload(
             It.Is<string>(y => y.EndsWith("-thumbhalf.jpg")),
             It.IsAny<Stream>(),
+            It.IsAny<string>(),
             It.IsAny<CancellationToken>()))
             .ReturnsAsync(expectedThumbHalfName);
         var useCase = new UseCase.CreateVideo(repositoryMock.Object,
@@ -288,6 +294,7 @@ public class CreateVideoTest(CreateVideoTestFixture fixture)
         var storageServiceMock = new Mock<IStorageService>();
         var expectedMediaName = $"/storage/{fixture.GetValidMediaPath()}";
         storageServiceMock.Setup(x => x.Upload(It.IsAny<string>(), It.IsAny<Stream>(),
+            It.IsAny<string>(),
             It.IsAny<CancellationToken>()))
             .ReturnsAsync(expectedMediaName);
         var useCase = new UseCase.CreateVideo(repositoryMock.Object,
@@ -337,6 +344,7 @@ public class CreateVideoTest(CreateVideoTestFixture fixture)
         var storageServiceMock = new Mock<IStorageService>();
         var expectedTrailerName = $"/storage/{fixture.GetValidMediaPath()}";
         storageServiceMock.Setup(x => x.Upload(It.IsAny<string>(), It.IsAny<Stream>(),
+            It.IsAny<string>(),
             It.IsAny<CancellationToken>()))
             .ReturnsAsync(expectedTrailerName);
         var useCase = new UseCase.CreateVideo(repositoryMock.Object,
@@ -405,6 +413,7 @@ public class CreateVideoTest(CreateVideoTestFixture fixture)
         storageServiceMock.Setup(x => x.Upload(
             It.IsAny<string>(),
             It.IsAny<Stream>(),
+            It.IsAny<string>(),
             It.IsAny<CancellationToken>()))
             .ThrowsAsync(new Exception("Something went wrong in Upload"));
 
@@ -450,17 +459,20 @@ public class CreateVideoTest(CreateVideoTestFixture fixture)
         storageServiceMock.Setup(x => x.Upload(
             It.Is<string>(y => y.EndsWith("-thumb.jpg")),
             It.IsAny<Stream>(),
+            It.IsAny<string>(),
             It.IsAny<CancellationToken>()))
             .ReturnsAsync(expectedThumbName);
         var expectedBannerName = $"123-banner.jpg";
         storageServiceMock.Setup(x => x.Upload(
             It.Is<string>(y => y.EndsWith("-banner.jpg")),
             It.IsAny<Stream>(),
+            It.IsAny<string>(),
             It.IsAny<CancellationToken>()))
             .ReturnsAsync(expectedBannerName);
         storageServiceMock.Setup(x => x.Upload(
             It.Is<string>(y => y.EndsWith("-thumbhalf.jpg")),
             It.IsAny<Stream>(),
+            It.IsAny<string>(),
             It.IsAny<CancellationToken>()))
             .ThrowsAsync(new Exception("Something went wrong in Upload"));
 
@@ -494,12 +506,14 @@ public class CreateVideoTest(CreateVideoTestFixture fixture)
         storageServiceMock.Setup(x => x.Upload(
             It.Is<string>(y => y.EndsWith("-media.mp4")),
             It.IsAny<Stream>(),
+            It.IsAny<string>(),
             It.IsAny<CancellationToken>()))
             .ReturnsAsync(expectedMediaName);
         var expectedTrailerName = $"123-trailer.mp4";
         storageServiceMock.Setup(x => x.Upload(
             It.Is<string>(y => y.EndsWith("-trailer.mp4")),
             It.IsAny<Stream>(),
+            It.IsAny<string>(),
             It.IsAny<CancellationToken>()))
             .ReturnsAsync(expectedTrailerName);
         unitOfWorkMock.Setup(x => x.Commit(It.IsAny<CancellationToken>()))

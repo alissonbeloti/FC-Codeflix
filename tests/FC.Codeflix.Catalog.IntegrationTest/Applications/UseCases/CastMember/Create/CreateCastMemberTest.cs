@@ -1,10 +1,13 @@
-﻿using FC.Codeflix.Catalog.Application.UseCases.CastMember.CreateCastMember;
+﻿using FC.Codeflix.Catalog.Application;
+using FC.Codeflix.Catalog.Application.UseCases.CastMember.CreateCastMember;
 using FC.Codeflix.Catalog.Infra.Data.EF;
 using FC.Codeflix.Catalog.Infra.Data.EF.Repositories;
 
 using FluentAssertions;
 
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 
 namespace FC.Codeflix.Catalog.IntegrationTest.Applications.UseCases.CastMember.Create;
 [Collection(nameof(CreateCastMemberTestFixture))]
@@ -16,7 +19,12 @@ public class CreateCastMemberTest(CreateCastMemberTestFixture fixture)
     {
         var dbContext = fixture.CreateDbContext();
         var repository = new CastMemberRepository(dbContext);
-        var unitOfWork = new UnitOfWork(dbContext);
+        var serviceCollection = new ServiceCollection();
+        serviceCollection.AddLogging();
+        var serviceProvider = serviceCollection.BuildServiceProvider();
+        var eventPublisher = new DomainEventPublisher(serviceProvider);
+        var unitOfWork = new UnitOfWork(dbContext, eventPublisher, 
+            serviceProvider.GetRequiredService<ILogger<UnitOfWork>>());
         var useCase = new CreateCastMember(repository, unitOfWork);
         var input = new CreateCastMemberInput(fixture.GetValidName(), fixture.GetRandomCastMemberType());
 

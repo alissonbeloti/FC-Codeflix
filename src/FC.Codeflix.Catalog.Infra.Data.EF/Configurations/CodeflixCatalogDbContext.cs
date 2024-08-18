@@ -25,6 +25,7 @@ public class CodeflixCatalogDbContext: DbContext
     {
         modelBuilder.ApplyConfiguration(new CategoryConfiguration());
         modelBuilder.ApplyConfiguration(new GenreConfiguration());
+        modelBuilder.ApplyConfiguration(new CastMemberConfiguration());
         modelBuilder.ApplyConfiguration(new GenresCategoriesConfiguration());
         modelBuilder.ApplyConfiguration(new VideoConfiguration());
         modelBuilder.ApplyConfiguration(new VideosCategoriesConfiguration());

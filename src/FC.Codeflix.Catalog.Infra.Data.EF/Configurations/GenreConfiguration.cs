@@ -10,5 +10,6 @@ internal class GenreConfiguration
     {
         builder.HasKey(c => c.Id);
         builder.Property(c => c.Name).IsRequired();
+        builder.Ignore(c => c.Events);
     }
 }

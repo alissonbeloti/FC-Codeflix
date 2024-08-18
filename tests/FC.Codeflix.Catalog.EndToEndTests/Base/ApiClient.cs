@@ -1,11 +1,7 @@
-﻿using FC.Codeflix.Catalog.Api.Configurations.Policies;
-using FC.Codeflix.Catalog.Api.Extensions.String;
-
-using Microsoft.AspNetCore.WebUtilities;
-
-using System.Text;
+﻿using System.Text;
 using System.Text.Json;
-
+using Microsoft.AspNetCore.WebUtilities;
+using FC.CodeFlix.Catalog.Infra.Message.JsonPolicies;
 
 namespace FC.Codeflix.Catalog.EndToEndTests.Base;
 
