@@ -1,4 +1,5 @@
 ﻿using FC.Codeflix.Catalog.Application.Exceptions;
+using FC.Codeflix.Catalog.Application.UseCases.Video.Common;
 using FC.Codeflix.Catalog.Domain.Entity;
 using FC.Codeflix.Catalog.Domain.Repository;
 using FC.Codeflix.Catalog.Domain.SeedWork;
@@ -66,13 +67,12 @@ public class VideoRepository : IVideoRepository
             query = query.Where(x => x.Title.Contains(input.Search));
         query = AddOrderBy(input, query);
 
-        var count = query.Count();
+        var count = await query.CountAsync();
         var items = await query.Skip(toSkip).Take(input.PerPage).ToListAsync();
-
-        items.ForEach(async video =>
+        foreach (var video in items)
         {
             await PopulateRelations(video, cancellationToken);
-        });
+        }
 
         return new(input.Page, input.PerPage, count, items.AsReadOnly());
     }
@@ -80,9 +80,34 @@ public class VideoRepository : IVideoRepository
     public async Task Update(Video aggregate, CancellationToken cancellationToken)
     {
         await AddRelations(aggregate, cancellationToken, true);
+        DeleteOrphanMedias(aggregate);
         _videos.Update(aggregate);
     }
 
+    private void DeleteOrphanMedias(Video video)
+    {
+        if (_context.Entry(video).Reference(v => v.Trailer).IsModified)
+        {
+            var oldTrailerId = _context.Entry(video)
+                .OriginalValues.GetValue<Guid?>($"{nameof(Video.Trailer)}Id");
+            if (oldTrailerId is not null && oldTrailerId != video.Trailer?.Id)
+            {
+                var oldTrailer = _medias.Find(oldTrailerId);
+                _medias.Remove(oldTrailer!);
+            }
+        }
+
+        if (_context.Entry(video).Reference(v => v.Media).IsModified)
+        {
+            var oldMediaId = _context.Entry(video)
+                .OriginalValues.GetValue<Guid?>($"{nameof(Video.Media)}Id");
+            if (oldMediaId is not null && oldMediaId != video.Media?.Id)
+            {
+                var oldMedia = _medias.Find(oldMediaId);
+                _medias.Remove(oldMedia!);
+            }
+        }
+    }
     private async Task AddRelations(Video video, CancellationToken cancellationToken, bool update = false)
     {
         if (video.Categories.Any())

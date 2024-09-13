@@ -6,15 +6,16 @@ using FC.Codeflix.Catalog.EndToEndTests.Api.Category.Common;
 namespace FC.Codeflix.Catalog.EndToEndTests.Api.Genre.Common;
 public class GenreBaseFixture: BaseFixture
 {
-    public GenrePersistence Persistence;
+    public GenrePersistence GenrePersistence;
     public CategoryPersitence CategoryPersitence;
+    protected CodeflixCatalogDbContext DbContext;
     public GenreBaseFixture()
     {
-        CodeflixCatalogDbContext dbContext = CreateDbContext();
-        Persistence = new GenrePersistence(dbContext);
-        CategoryPersitence = new CategoryPersitence(dbContext);
+        DbContext = CreateDbContext();
+        GenrePersistence = new GenrePersistence(DbContext);
+        CategoryPersitence = new CategoryPersitence(DbContext);
     }
-    public bool GetRandoBoolean()
+    public bool GetRandomBoolean()
         => (new Random()).NextDouble() < 0.5;
     public List<Guid> GetRamdoGuids(int? count = null)
         => Enumerable.Range(1, count ?? new Random().Next(1, 10))
@@ -28,7 +29,7 @@ public class GenreBaseFixture: BaseFixture
         List<Guid>? categoriesIds = null, string? name = null)
     {
         var genre = new DomainEntity.Genre(name ?? GetValidGenreName(),
-        isActive ?? GetRandoBoolean());
+        isActive ?? GetRandomBoolean());
         categoriesIds?.ForEach(genre.AddCategory);
         return genre;
     }
@@ -37,12 +38,12 @@ public class GenreBaseFixture: BaseFixture
         => Enumerable.Range(1, count).Select(_ =>
         {
             var genre = new DomainEntity.Genre(GetValidGenreName(),
-                GetRandoBoolean());
+                GetRandomBoolean());
             return genre;
         }).ToList();
 
     public Domain.Entity.Category GetExampleCategory()
-       => new(GetValidCategoryName(), GetValidCategoryDescription(), GetRandoBoolean());
+       => new(GetValidCategoryName(), GetValidCategoryDescription(), GetRandomBoolean());
 
     public List<Domain.Entity.Category> GetExampleCategoryList(int length = 10)
         => Enumerable.Range(1, length).Select(_ => GetExampleCategory()).ToList();

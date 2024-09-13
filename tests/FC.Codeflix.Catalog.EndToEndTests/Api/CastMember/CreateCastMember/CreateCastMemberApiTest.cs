@@ -12,7 +12,7 @@ using System.Net;
 namespace FC.Codeflix.Catalog.EndToEndTests.Api.CastMember.CreateCastMember;
 
 [Collection(nameof(CastMemberApiBaseFixture))]
-public class CreateCastMemberApiTest(CastMemberApiBaseFixture fixture)
+public class CreateCastMemberApiTest(CastMemberApiBaseFixture fixture) : IDisposable
 {
     [Fact(DisplayName = nameof(Create))]
     [Trait("EndToEnd/API", "CastMember/Create - Endpoints")]
@@ -39,6 +39,7 @@ public class CreateCastMemberApiTest(CastMemberApiBaseFixture fixture)
         exampleDb.Type.Should().Be(input.Type);
     }
 
+
     [Fact(DisplayName = nameof(ThrowWhenNameIsEmpty))]
     [Trait("EndToEnd/API", "CastMember/Create - Endpoints")]
     public async Task ThrowWhenNameIsEmpty()
@@ -56,4 +57,5 @@ public class CreateCastMemberApiTest(CastMemberApiBaseFixture fixture)
         output!.Title.Should().Be("One or more validation errors occurred");
         output!.Detail.Should().Be("Name should not be empty or null");
     }
+    public void Dispose() => fixture.CleanPersistence();
 }

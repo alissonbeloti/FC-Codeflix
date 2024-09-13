@@ -31,6 +31,7 @@ public class CodeflixCatalogDbContext: DbContext
         modelBuilder.ApplyConfiguration(new VideosCategoriesConfiguration());
         modelBuilder.ApplyConfiguration(new VideosGenresConfiguration());
         modelBuilder.ApplyConfiguration(new VideosCastMembersConfiguration());
+        modelBuilder.ApplyConfiguration(new MediaConfiguration());
         base.OnModelCreating(modelBuilder);
     }
 }

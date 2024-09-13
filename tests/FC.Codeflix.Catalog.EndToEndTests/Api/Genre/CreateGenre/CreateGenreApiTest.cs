@@ -10,7 +10,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace FC.Codeflix.Catalog.EndToEndTests.Api.Genre.CreateGenre;
 
 [Collection(nameof(CreateGenreApiTestFixture))]
-public class CreateGenreApiTest
+public class CreateGenreApiTest : IDisposable
 {
     private readonly CreateGenreApiTestFixture _fixture;
 
@@ -23,7 +23,7 @@ public class CreateGenreApiTest
     {
         var apiInput = new CreateGenreInput(
                 _fixture.GetValidGenreName(),
-                _fixture.GetRandoBoolean()
+                _fixture.GetRandomBoolean()
                 );
 
         var (response, output) = await _fixture.ApiClient
@@ -37,7 +37,7 @@ public class CreateGenreApiTest
         output.Data.Name.Should().Be(apiInput.Name);
         output.Data.IsActive.Should().Be(apiInput.IsActive);
         output.Data.Categories.Should().HaveCount(0);
-        var genreDb = await _fixture.Persistence.GetById(output.Data.Id);
+        var genreDb = await _fixture.GenrePersistence.GetById(output.Data.Id);
         genreDb.Should().NotBeNull();
         genreDb!.Name.Should().Be(apiInput.Name);
         genreDb!.IsActive.Should().Be(apiInput.IsActive);
@@ -52,7 +52,7 @@ public class CreateGenreApiTest
         var relatedCategories = exampleCategories.Skip(3).Take(3).Select(x => x.Id).ToList();
         var apiInput = new CreateGenreInput(
                 _fixture.GetValidGenreName(),
-                _fixture.GetRandoBoolean(),
+                _fixture.GetRandomBoolean(),
                 relatedCategories
                 );
 
@@ -69,17 +69,18 @@ public class CreateGenreApiTest
         output.Data.Categories.Should().HaveCount(relatedCategories.Count);
         var outputRelatedCategoriesIds = output.Data.Categories.Select(x => x.Id).ToList();
         outputRelatedCategoriesIds.Should().BeEquivalentTo(relatedCategories);
-        var genreDb = await _fixture.Persistence.GetById(output.Data.Id);
+        var genreDb = await _fixture.GenrePersistence.GetById(output.Data.Id);
         genreDb.Should().NotBeNull();
         genreDb!.Name.Should().Be(apiInput.Name);
         genreDb!.IsActive.Should().Be(apiInput.IsActive);
         var relationsFromDb = 
-            await _fixture.Persistence.GetGenresCategoriesRelationsByGenreId(output.Data.Id); 
+            await _fixture.GenrePersistence.GetGenresCategoriesRelationsByGenreId(output.Data.Id); 
         relationsFromDb.Should().NotBeNull();
         relationsFromDb.Should().HaveCount(relatedCategories.Count);
         var relatedCategoriesIdsFromDb = relationsFromDb.Select(x => x.CategoryId).ToList();
         relatedCategoriesIdsFromDb.Should().BeEquivalentTo(relatedCategories);
     }
+
 
     [Fact(DisplayName = nameof(CreateGenreWithRelations))]
     [Trait("EndToEnd/API", "Genre/Create - Endpoints")]
@@ -91,7 +92,7 @@ public class CreateGenreApiTest
         var invalidCategoryId = Guid.NewGuid();
         var apiInput = new CreateGenreInput(
                 _fixture.GetValidGenreName(),
-                _fixture.GetRandoBoolean(),
+                _fixture.GetRandomBoolean(),
                 relatedCategories
                 );
         relatedCategories.Add(invalidCategoryId);
@@ -104,4 +105,5 @@ public class CreateGenreApiTest
         output.Type.Should().Be("RelatedAggregate");
         output.Detail.Should().Be($"Related category id (or ids) not found: {invalidCategoryId}.");
     }
+    public void Dispose() => _fixture.CleanPersistence();
 }

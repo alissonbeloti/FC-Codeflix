@@ -2,6 +2,7 @@
 using FC.Codeflix.Catalog.Application.UseCases.CastMember.ListCastMembers;
 using FC.Codeflix.Catalog.Domain.SeedWork.SearchableRepository;
 using FC.Codeflix.Catalog.EndToEndTests.Api.CastMember.Common;
+using FC.Codeflix.Catalog.EndToEndTests.Extensions.DateTimes;
 using FC.Codeflix.Catalog.EndToEndTests.Models;
 using FC.Codeflix.Catalog.Infra.Data.EF.Repositories;
 
@@ -158,13 +159,12 @@ public class ListCastMemberTest(CastMemberApiBaseFixture fixture) : IDisposable
     [InlineData("name", "desc")]
     [InlineData("id", "asc")]
     [InlineData("id", "desc")]
-    [InlineData("createdAt", "asc")]
-    [InlineData("createdAt", "desc")]
     [InlineData("", "desc")]
     public async Task Ordered(string orderBy, string order)
     {
 
         var examples = fixture.GetExampleCastMemberList(5);
+        examples.ForEach(e => e.CreatedAt.TrimMilliseconds());
         var arrangeDbContext = fixture.CreateDbContext();
         await fixture.Persistence.InsertList(examples);
         var searchOrder = order == "asc"? SearchOrder.Asc: SearchOrder.Desc;

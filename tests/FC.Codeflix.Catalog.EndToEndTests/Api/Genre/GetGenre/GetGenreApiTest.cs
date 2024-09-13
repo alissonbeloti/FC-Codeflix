@@ -14,7 +14,7 @@ using DomainEntity = FC.Codeflix.Catalog.Domain.Entity;
 namespace FC.Codeflix.Catalog.EndToEndTests.Api.Genre.GetGenre;
 
 [Collection(nameof(GetGenreApiTestFixture))]
-public class GetGenreApiTest
+public class GetGenreApiTest : IDisposable
 {
     private readonly GetGenreApiTestFixture _fixture;
 
@@ -27,7 +27,7 @@ public class GetGenreApiTest
         // Cadastrar lista de genres na persistência
         List<DomainEntity.Genre> exampleGenres = _fixture.GetExampleGenresList(10);
         var targetGenre = exampleGenres[5];
-        await _fixture.Persistence.InsertList(exampleGenres);
+        await _fixture.GenrePersistence.InsertList(exampleGenres);
 
         // buscar por genre específico por rest
         var (response, output) = await _fixture.ApiClient
@@ -49,7 +49,7 @@ public class GetGenreApiTest
         // Cadastrar lista de genres na persistência
         List<DomainEntity.Genre> exampleGenres = _fixture.GetExampleGenresList(10);
         var randomGuid = Guid.NewGuid();
-        await _fixture.Persistence.InsertList(exampleGenres);
+        await _fixture.GenrePersistence.InsertList(exampleGenres);
 
         // buscar por genre específico por rest
         var (response, output) = await _fixture.ApiClient
@@ -89,9 +89,9 @@ public class GetGenreApiTest
             )
         );
         
-        await _fixture.Persistence.InsertList(exampleGenres);
+        await _fixture.GenrePersistence.InsertList(exampleGenres);
         await _fixture.CategoryPersitence.InsertList(exampleCategories);
-        await _fixture.Persistence.InsertGenresCategoriesRelationsList(genresCategories);
+        await _fixture.GenrePersistence.InsertGenresCategoriesRelationsList(genresCategories);
 
         var (response, output) = await _fixture.ApiClient
             .Get<ApiResponse<GenreModelOutput>>($"/genres/{targetGenre.Id}");
@@ -106,4 +106,6 @@ public class GetGenreApiTest
             output.Data.Categories.Select(relation => relation.Id).ToList();
         relatedCategoriesIds.Should().BeEquivalentTo(targetGenre.Categories);
     }
+
+    public void Dispose() => _fixture.CleanPersistence();
 }

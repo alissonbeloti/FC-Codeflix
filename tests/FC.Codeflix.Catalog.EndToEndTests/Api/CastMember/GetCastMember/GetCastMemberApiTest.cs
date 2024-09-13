@@ -11,8 +11,11 @@ using System.Net;
 namespace FC.Codeflix.Catalog.EndToEndTests.Api.CastMember.GetCastMember;
 
 [Collection(nameof(CastMemberApiBaseFixture))]
-public class GetCastMemberApiTest(CastMemberApiBaseFixture fixture)
+public class GetCastMemberApiTest(CastMemberApiBaseFixture fixture) : 
+    IDisposable
 {
+    
+
     [Fact(DisplayName = nameof(Get))]
     [Trait("EndToEnd/API", "CastMember/Get - Endpoints")]
     public async Task Get()
@@ -48,5 +51,9 @@ public class GetCastMemberApiTest(CastMemberApiBaseFixture fixture)
         output.Should().NotBeNull();
         output!.Title.Should().Be("Not Found");
         output.Detail.Should().Be($"CastMember '{randomGuid}' not found.");
+    }
+    public void Dispose()
+    {
+        fixture.CleanPersistence();
     }
 }

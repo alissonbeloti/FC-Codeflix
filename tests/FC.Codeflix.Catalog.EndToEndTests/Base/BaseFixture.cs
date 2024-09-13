@@ -12,7 +12,7 @@ namespace FC.Codeflix.Catalog.EndToEndTests.Base;
 public class BaseFixture
 {
     protected Faker Faker { get; set; }
-    protected CustomWebApplicationFactory<Program> WebAppFactory { get; set; }
+    public CustomWebApplicationFactory<Program> WebAppFactory { get; set; }
     protected HttpClient HttpClient { get; set; }
     public ApiClient ApiClient { get; set; }
     private readonly string? _dbConnectionString;
@@ -81,6 +81,6 @@ public class BaseFixture
           name ?? GetValidName(),
           GetRandomCastMemberType());
 
-    internal List<CastMember> GetExampleCastMemberList(int count)
+    internal List<CastMember> GetExampleCastMemberList(int count = 10)
         => Enumerable.Range(1, count).Select(_ => GetExampleCastMember()).ToList();
 }

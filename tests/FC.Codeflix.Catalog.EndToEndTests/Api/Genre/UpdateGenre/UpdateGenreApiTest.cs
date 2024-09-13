@@ -11,7 +11,7 @@ using FC.Codeflix.Catalog.Domain.Entity;
 namespace FC.Codeflix.Catalog.EndToEndTests.Api.Genre.UpdateGenre;
 
 [Collection(nameof(UpdateGenreApiTestFixture))]
-public class UpdateGenreApiTest
+public class UpdateGenreApiTest : IDisposable
 {
     private readonly UpdateGenreApiTestFixture _fixture;
 
@@ -24,8 +24,8 @@ public class UpdateGenreApiTest
     {
         List<DomainEntity.Genre> exampleGenres = _fixture.GetExampleGenresList(10);
         var targetGenre = exampleGenres[5];
-        await _fixture.Persistence.InsertList(exampleGenres);
-        var input = new UpdateGenreApiInput(_fixture.GetValidGenreName(), _fixture.GetRandoBoolean());
+        await _fixture.GenrePersistence.InsertList(exampleGenres);
+        var input = new UpdateGenreApiInput(_fixture.GetValidGenreName(), _fixture.GetRandomBoolean());
         // buscar por genre específico por rest
         var (response, output) = await _fixture.ApiClient
             .Put<ApiResponse<GenreModelOutput>>($"/genres/{targetGenre.Id}", input);
@@ -37,7 +37,7 @@ public class UpdateGenreApiTest
         output!.Data.Id.Should().Be(targetGenre.Id);
         output!.Data.Name.Should().Be(input.Name);
         output!.Data.IsActive.Should().Be(input.IsActive!.Value);
-        var genreDb = await _fixture.Persistence.GetById(output.Data.Id);
+        var genreDb = await _fixture.GenrePersistence.GetById(output.Data.Id);
         genreDb.Should().NotBeNull();
         genreDb!.Name.Should().Be(input.Name);
         genreDb!.IsActive.Should().Be(input.IsActive!.Value);
@@ -50,8 +50,8 @@ public class UpdateGenreApiTest
         List<DomainEntity.Genre> exampleGenres = _fixture.GetExampleGenresList(10);
         var targetGenre = exampleGenres[5];
         var invalidRelatedId = Guid.NewGuid();
-        await _fixture.Persistence.InsertList(exampleGenres);
-        var input = new UpdateGenreApiInput(_fixture.GetValidGenreName(), _fixture.GetRandoBoolean(),
+        await _fixture.GenrePersistence.InsertList(exampleGenres);
+        var input = new UpdateGenreApiInput(_fixture.GetValidGenreName(), _fixture.GetRandomBoolean(),
             new List<Guid> { invalidRelatedId });
         // buscar por genre específico por rest
         var (response, output) = await _fixture.ApiClient
@@ -71,8 +71,8 @@ public class UpdateGenreApiTest
     {
         List<DomainEntity.Genre> exampleGenres = _fixture.GetExampleGenresList(10);
         var randomGuid = Guid.NewGuid();
-        await _fixture.Persistence.InsertList(exampleGenres);
-        var input = new UpdateGenreApiInput(_fixture.GetValidGenreName(), _fixture.GetRandoBoolean());
+        await _fixture.GenrePersistence.InsertList(exampleGenres);
+        var input = new UpdateGenreApiInput(_fixture.GetValidGenreName(), _fixture.GetRandomBoolean());
         // buscar por genre específico por rest
         var (response, output) = await _fixture.ApiClient
             .Put<ProblemDetails>($"/genres/{randomGuid}", input);
@@ -122,10 +122,10 @@ public class UpdateGenreApiTest
             if (!newRelatedCategoriesIds.Contains(selected.Id))
                 newRelatedCategoriesIds.Add(selected.Id);
         }
-        await _fixture.Persistence.InsertList(exampleGenres);
+        await _fixture.GenrePersistence.InsertList(exampleGenres);
         await _fixture.CategoryPersitence.InsertList(exampleCategories);
-        await _fixture.Persistence.InsertGenresCategoriesRelationsList(genresCategories);
-        var input = new UpdateGenreApiInput(_fixture.GetValidGenreName(), _fixture.GetRandoBoolean(),
+        await _fixture.GenrePersistence.InsertGenresCategoriesRelationsList(genresCategories);
+        var input = new UpdateGenreApiInput(_fixture.GetValidGenreName(), _fixture.GetRandomBoolean(),
             newRelatedCategoriesIds
             );
 
@@ -141,11 +141,11 @@ public class UpdateGenreApiTest
         List<Guid> relatedCategoriesIdsFromOutput =
             output.Data.Categories.Select(relation => relation.Id).ToList();
         relatedCategoriesIdsFromOutput.Should().BeEquivalentTo(newRelatedCategoriesIds);
-        var genreDb = await _fixture.Persistence.GetById(output.Data.Id);
+        var genreDb = await _fixture.GenrePersistence.GetById(output.Data.Id);
         genreDb.Should().NotBeNull();
         genreDb!.Name.Should().Be(input.Name);
         genreDb!.IsActive.Should().Be(input.IsActive!.Value);
-        var genresCategoriesFromDb = await _fixture.Persistence.
+        var genresCategoriesFromDb = await _fixture.GenrePersistence.
             GetGenresCategoriesRelationsByGenreId(genreDb.Id);
         var relatedCategoriesIdsFromDb = genresCategoriesFromDb.Select(x => x.CategoryId).ToList();
         relatedCategoriesIdsFromDb.Should().BeEquivalentTo(newRelatedCategoriesIds);
@@ -176,10 +176,10 @@ public class UpdateGenreApiTest
                 categoryId => genresCategories.Add(new GenresCategories(categoryId, genre.Id))
             )
         );
-        await _fixture.Persistence.InsertList(exampleGenres);
+        await _fixture.GenrePersistence.InsertList(exampleGenres);
         await _fixture.CategoryPersitence.InsertList(exampleCategories);
-        await _fixture.Persistence.InsertGenresCategoriesRelationsList(genresCategories);
-        var input = new UpdateGenreApiInput(_fixture.GetValidGenreName(), _fixture.GetRandoBoolean());
+        await _fixture.GenrePersistence.InsertGenresCategoriesRelationsList(genresCategories);
+        var input = new UpdateGenreApiInput(_fixture.GetValidGenreName(), _fixture.GetRandomBoolean());
 
         var (response, output) = await _fixture.ApiClient
             .Put<ApiResponse<GenreModelOutput>>($"/genres/{targetGenre.Id}", input);
@@ -193,13 +193,18 @@ public class UpdateGenreApiTest
         List<Guid> relatedCategoriesIdsFromOutput =
             output.Data.Categories.Select(relation => relation.Id).ToList();
         relatedCategoriesIdsFromOutput.Should().BeEquivalentTo(targetGenre.Categories);
-        var genreDb = await _fixture.Persistence.GetById(output.Data.Id);
+        var genreDb = await _fixture.GenrePersistence.GetById(output.Data.Id);
         genreDb.Should().NotBeNull();
         genreDb!.Name.Should().Be(input.Name);
         genreDb!.IsActive.Should().Be(input.IsActive!.Value);
-        var genresCategoriesFromDb = await _fixture.Persistence.
+        var genresCategoriesFromDb = await _fixture.GenrePersistence.
             GetGenresCategoriesRelationsByGenreId(genreDb.Id);
         var relatedCategoriesIdsFromDb = genresCategoriesFromDb.Select(x => x.CategoryId).ToList();
         relatedCategoriesIdsFromDb.Should().BeEquivalentTo(targetGenre.Categories);
+    }
+
+    public void Dispose()
+    {
+        _fixture.CleanPersistence();
     }
 }

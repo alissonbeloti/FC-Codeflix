@@ -13,7 +13,7 @@ using System.Net;
 namespace FC.Codeflix.Catalog.EndToEndTests.Api.CastMember.UpdateCastMember;
 
 [Collection(nameof(CastMemberApiBaseFixture))]
-public class UpdateCastMemberApiTest(CastMemberApiBaseFixture fixture)
+public class UpdateCastMemberApiTest(CastMemberApiBaseFixture fixture) : IDisposable
 {
     [Fact(DisplayName = nameof(Update))]
     [Trait("EndToEnd/API", "CastMember/Update - Endpoints")]
@@ -87,4 +87,6 @@ public class UpdateCastMemberApiTest(CastMemberApiBaseFixture fixture)
         output.Type.Should().Be("UnprocessableEntity");
         output.Detail.Should().Be("Name should not be empty or null");
     }
+
+    public void Dispose() => fixture.CleanPersistence();
 }

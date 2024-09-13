@@ -54,8 +54,16 @@ public class DeleteVideoTest
         var videoExample = _fixture.GetValidVideo();
         videoExample.UpdateMedia(_fixture.GetValidMediaPath());
         videoExample.UpdateTrailer(_fixture.GetValidMediaPath());
-        var filePaths= new List<string> { videoExample.Media!.FilePath, 
-            videoExample.Trailer!.FilePath};
+        videoExample.UpdateBanner(_fixture.GetValidImagePath());
+        videoExample.UpdateThumb(_fixture.GetValidImagePath());
+        videoExample.UpdateThumbHalf(_fixture.GetValidImagePath());
+        var filePaths= new List<string> { 
+            videoExample.Media!.FilePath, 
+            videoExample.Trailer!.FilePath,
+            videoExample.Banner!.Path,
+            videoExample.Thumb!.Path,
+            videoExample.ThumbHalf!.Path,
+        };
         var input = _fixture.GetValidInput(videoExample.Id);
         _repositoryMock.Setup(x => x.Get(
             It.Is<Guid>(id => id == videoExample.Id),
@@ -72,9 +80,9 @@ public class DeleteVideoTest
         _unitOfWorkMock.Verify(x => x.Commit(It.IsAny<CancellationToken>()), Times.Once);
         _storageService.Verify(x => x.Delete(It.Is<string>(
             filePath => filePaths.Contains(filePath)),
-            It.IsAny<CancellationToken>()), Times.Exactly(2));
+            It.IsAny<CancellationToken>()), Times.Exactly(5));
         _storageService.Verify(x => x.Delete(It.IsAny<string>(),
-            It.IsAny<CancellationToken>()), Times.Exactly(2));
+            It.IsAny<CancellationToken>()), Times.Exactly(5));
     }
 
     [Fact(DisplayName = nameof(DeleteVideoWithOnlyTrailerAndClearStorageOnlyForTrailer))]
@@ -99,6 +107,87 @@ public class DeleteVideoTest
         _unitOfWorkMock.Verify(x => x.Commit(It.IsAny<CancellationToken>()), Times.Once);
         _storageService.Verify(x => x.Delete(It.Is<string>(
             filePath => filePath == videoExample.Trailer!.FilePath),
+            It.IsAny<CancellationToken>()), Times.Once);
+        _storageService.Verify(x => x.Delete(It.IsAny<string>(),
+            It.IsAny<CancellationToken>()), Times.Once);
+    }
+
+    [Fact(DisplayName = nameof(DeleteVideoWithOnlyBannerAndClearStorageOnlyForBanner))]
+    [Trait("Application", "DeleteVideo - Use Cases")]
+    private async Task DeleteVideoWithOnlyBannerAndClearStorageOnlyForBanner()
+    {
+        var videoExample = _fixture.GetValidVideo();
+        videoExample.UpdateBanner(_fixture.GetValidImagePath());
+        var input = _fixture.GetValidInput(videoExample.Id);
+        _repositoryMock.Setup(x => x.Get(
+            It.Is<Guid>(id => id == videoExample.Id),
+            It.IsAny<CancellationToken>()
+            )).ReturnsAsync(videoExample);
+
+        await _useCase.Handle(input, CancellationToken.None);
+
+        _repositoryMock.VerifyAll();
+        _repositoryMock.Verify(x => x.Delete(
+            It.Is<DomainEntity.Video>(x => x.Id == videoExample.Id),
+            It.IsAny<CancellationToken>()
+            ), Times.Once);
+        _unitOfWorkMock.Verify(x => x.Commit(It.IsAny<CancellationToken>()), Times.Once);
+        _storageService.Verify(x => x.Delete(It.Is<string>(
+            filePath => filePath == videoExample.Banner!.Path),
+            It.IsAny<CancellationToken>()), Times.Once);
+        _storageService.Verify(x => x.Delete(It.IsAny<string>(),
+            It.IsAny<CancellationToken>()), Times.Once);
+    }
+
+    [Fact(DisplayName = nameof(DeleteVideoWithOnlyThumbAndClearStorageOnlyForThumb))]
+    [Trait("Application", "DeleteVideo - Use Cases")]
+    private async Task DeleteVideoWithOnlyThumbAndClearStorageOnlyForThumb()
+    {
+        var videoExample = _fixture.GetValidVideo();
+        videoExample.UpdateThumb(_fixture.GetValidImagePath());
+        var input = _fixture.GetValidInput(videoExample.Id);
+        _repositoryMock.Setup(x => x.Get(
+            It.Is<Guid>(id => id == videoExample.Id),
+            It.IsAny<CancellationToken>()
+            )).ReturnsAsync(videoExample);
+
+        await _useCase.Handle(input, CancellationToken.None);
+
+        _repositoryMock.VerifyAll();
+        _repositoryMock.Verify(x => x.Delete(
+            It.Is<DomainEntity.Video>(x => x.Id == videoExample.Id),
+            It.IsAny<CancellationToken>()
+            ), Times.Once);
+        _unitOfWorkMock.Verify(x => x.Commit(It.IsAny<CancellationToken>()), Times.Once);
+        _storageService.Verify(x => x.Delete(It.Is<string>(
+            filePath => filePath == videoExample.Thumb!.Path),
+            It.IsAny<CancellationToken>()), Times.Once);
+        _storageService.Verify(x => x.Delete(It.IsAny<string>(),
+            It.IsAny<CancellationToken>()), Times.Once);
+    }
+
+    [Fact(DisplayName = nameof(DeleteVideoWithOnlyThumbHalfAndClearStorageOnlyForThumbHalf))]
+    [Trait("Application", "DeleteVideo - Use Cases")]
+    private async Task DeleteVideoWithOnlyThumbHalfAndClearStorageOnlyForThumbHalf()
+    {
+        var videoExample = _fixture.GetValidVideo();
+        videoExample.UpdateThumbHalf(_fixture.GetValidImagePath());
+        var input = _fixture.GetValidInput(videoExample.Id);
+        _repositoryMock.Setup(x => x.Get(
+            It.Is<Guid>(id => id == videoExample.Id),
+            It.IsAny<CancellationToken>()
+            )).ReturnsAsync(videoExample);
+
+        await _useCase.Handle(input, CancellationToken.None);
+
+        _repositoryMock.VerifyAll();
+        _repositoryMock.Verify(x => x.Delete(
+            It.Is<DomainEntity.Video>(x => x.Id == videoExample.Id),
+            It.IsAny<CancellationToken>()
+            ), Times.Once);
+        _unitOfWorkMock.Verify(x => x.Commit(It.IsAny<CancellationToken>()), Times.Once);
+        _storageService.Verify(x => x.Delete(It.Is<string>(
+            filePath => filePath == videoExample.ThumbHalf!.Path),
             It.IsAny<CancellationToken>()), Times.Once);
         _storageService.Verify(x => x.Delete(It.IsAny<string>(),
             It.IsAny<CancellationToken>()), Times.Once);

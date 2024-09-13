@@ -74,13 +74,13 @@ public class CategoryRepository : ICategoryRepository
     }
 
     public async Task<IReadOnlyList<Guid>> GetIdsListByIds(List<Guid> ids, CancellationToken cancellationToken)
-        => (await _categories.AsNoTracking().Where(category => ids.Contains(category.Id))
+        => (await _categories.AsNoTracking().Where(category => ids.ToArray().Contains(category.Id))
             .Select(category => category.Id)
             .ToListAsync(cancellationToken))
             .AsReadOnly();
 
     public async Task<IReadOnlyList<Category>> GetListByIds(List<Guid> ids, CancellationToken cancellationToken)
-        => (await _categories.AsNoTracking().Where(category => ids.Contains(category.Id))
+        => (await _categories.AsNoTracking().Where(category => ids.ToArray().Contains(category.Id))
             .ToListAsync(cancellationToken))
             .AsReadOnly();
 }

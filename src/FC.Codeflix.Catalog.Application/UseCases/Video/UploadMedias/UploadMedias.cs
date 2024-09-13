@@ -14,6 +14,7 @@ public class UploadMedias(IVideoRepository videoRepository,
         {
             await UploadVideo(storageService, request, video, cancellationToken);
             await UploadTrailer(storageService, request, video, cancellationToken);
+            await UploadImages(storageService, request, video, cancellationToken);
             await videoRepository.Update(video, cancellationToken);
             await unitOfWork.Commit(cancellationToken);
         }
@@ -34,6 +35,19 @@ public class UploadMedias(IVideoRepository videoRepository,
         {
             await storageService.Delete(video.Trailer.FilePath, cancellationToken);
         }
+        if (request.Banner is not null && video.Banner is not null)
+        {
+            await storageService.Delete(video.Banner.Path, cancellationToken);
+        }
+        if (request.Thumb is not null && video.Thumb is not null)
+        {
+            await storageService.Delete(video.Thumb.Path, cancellationToken);
+        }
+        if (request.ThumbHalf is not null && video.ThumbHalf is not null)
+        {
+            await storageService.Delete(video.ThumbHalf.Path, cancellationToken);
+        }
+
     }
 
     private static async Task UploadTrailer(IStorageService storageService, UploadMediasInput request, Domain.Entity.Video video, CancellationToken cancellationToken)
@@ -60,6 +74,44 @@ public class UploadMedias(IVideoRepository videoRepository,
                 request.VideoInput.ContentType,
                 cancellationToken);
             video.UpdateMedia(uploadedFilePath);
+        }
+    }
+
+    private static async Task UploadImages(IStorageService storageService, 
+        UploadMediasInput request, 
+        Domain.Entity.Video video, CancellationToken cancellationToken)
+    {
+        if (request.Banner is not null)
+        {
+            var uploadedFilePath = await storageService.Upload(
+                StorageName.Create(video.Id, nameof(video.Banner),
+                request.Banner.Extension),
+                request.Banner.FileStream,
+                request.Banner.ContentType,
+                cancellationToken);
+            video.UpdateBanner(uploadedFilePath);
+        }
+
+        if (request.Thumb is not null)
+        {
+            var uploadedFilePath = await storageService.Upload(
+                StorageName.Create(video.Id, nameof(video.Thumb),
+                request.Thumb.Extension),
+                request.Thumb.FileStream,
+                request.Thumb.ContentType,
+                cancellationToken);
+            video.UpdateThumb(uploadedFilePath);
+        }
+
+        if (request.ThumbHalf is not null)
+        {
+            var uploadedFilePath = await storageService.Upload(
+                StorageName.Create(video.Id, nameof(video.ThumbHalf),
+                request.ThumbHalf.Extension),
+                request.ThumbHalf.FileStream,
+                request.ThumbHalf.ContentType,
+                cancellationToken);
+            video.UpdateThumbHalf(uploadedFilePath);
         }
     }
 }

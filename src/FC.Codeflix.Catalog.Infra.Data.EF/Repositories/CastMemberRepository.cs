@@ -26,13 +26,13 @@ namespace FC.Codeflix.Catalog.Infra.Data.EF.Repositories
         }
 
         public async Task<IReadOnlyList<Guid>> GetIdsListByIds(List<Guid> ids, CancellationToken cancellationToken)
-         => (await castMembers.AsNoTracking().Where(castmember => ids.Contains(castmember.Id))
+         => (await castMembers.AsNoTracking().Where(castmember => ids.ToArray().Contains(castmember.Id))
             .Select(cast => cast.Id)
             .ToListAsync(cancellationToken))
             .AsReadOnly();
 
         public async Task<IReadOnlyList<CastMember>> GetListByIds(List<Guid> ids, CancellationToken cancellationToken)
-        => (await castMembers.AsNoTracking().Where(cm => ids.Contains(cm.Id))
+        => (await castMembers.AsNoTracking().Where(cm => ids.ToArray().Contains(cm.Id))
             .ToListAsync(cancellationToken))
             .AsReadOnly();
 

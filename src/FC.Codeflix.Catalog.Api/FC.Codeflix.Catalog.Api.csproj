@@ -11,6 +11,8 @@
 
   <ItemGroup>
     
+    <PackageReference Include="Google.Cloud.Storage.V1" Version="4.4.0" />
+    
     <PackageReference Include="MediatR" Version="12.3.0" />
     
     <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="8.0.7">
@@ -30,6 +32,7 @@
     <ProjectReference Include="..\FC.Codeflix.Catalog.Application\FC.Codeflix.Catalog.Application.csproj" />
     <ProjectReference Include="..\FC.Codeflix.Catalog.Infra.Data.EF\FC.Codeflix.Catalog.Infra.Data.EF.csproj" />
     <ProjectReference Include="..\FC.CodeFlix.Catalog.Infra.Message\FC.CodeFlix.Catalog.Infra.Message.csproj" />
+    <ProjectReference Include="..\FC.Codeflix.Catalog.Infra.Storage\FC.Codeflix.Catalog.Infra.Storage.csproj" />
   </ItemGroup>
 
 </Project>

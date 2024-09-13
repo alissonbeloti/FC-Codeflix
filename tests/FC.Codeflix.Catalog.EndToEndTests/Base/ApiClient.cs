@@ -2,6 +2,7 @@
 using System.Text.Json;
 using Microsoft.AspNetCore.WebUtilities;
 using FC.CodeFlix.Catalog.Infra.Message.JsonPolicies;
+using FC.Codeflix.Catalog.Application.UseCases.Video.Common;
 
 namespace FC.Codeflix.Catalog.EndToEndTests.Base;
 
@@ -92,5 +93,20 @@ public class ApiClient
         var parametersDictionary = 
             Newtonsoft.Json.JsonConvert.DeserializeObject<Dictionary<string, string>>(parametersJson);
         return QueryHelpers.AddQueryString(route, parametersDictionary!);
+    }
+
+    public async Task<(HttpResponseMessage?, TOutput?)> PostFormData<TOutput>(string route, FileInput file)
+        where TOutput : class
+    {
+        var fileContent = new StreamContent(file.FileStream);
+        fileContent.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue(
+            file.ContentType );
+        using var content = new MultipartFormDataContent
+        {
+            { fileContent, "media_file", $"media.{file.Extension}" }
+        };
+        var response = await _httpClient.PostAsync(route, content);
+        var output = await GetOutput<TOutput>(response);
+        return (response, output);
     }
 }

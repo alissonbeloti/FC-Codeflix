@@ -11,7 +11,7 @@ using System.Net;
 namespace FC.Codeflix.Catalog.EndToEndTests.Api.CastMember.DeleteCastMember;
 
 [Collection(nameof(CastMemberApiBaseFixture))]
-public class DeleteCastMemberApiTest(CastMemberApiBaseFixture fixture)
+public class DeleteCastMemberApiTest(CastMemberApiBaseFixture fixture) : IDisposable
 {
     [Fact(DisplayName = nameof(Delete))]
     [Trait("EndToEnd/API", "CastMember/Delete - Endpoints")]
@@ -46,4 +46,5 @@ public class DeleteCastMemberApiTest(CastMemberApiBaseFixture fixture)
         output!.Title.Should().Be("Not Found");
         output.Detail.Should().Be($"CastMember '{randomGuid}' not found.");
     }
+    public void Dispose() => fixture.CleanPersistence();
 }

@@ -4,7 +4,8 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services
     .AddAppConnections(builder.Configuration)
-    .AddUseCases()
+    .AddUseCases(builder.Configuration)
+    .AddStorage(builder.Configuration)
     .AddConfigurationsControllers();
 
 var app = builder.Build();

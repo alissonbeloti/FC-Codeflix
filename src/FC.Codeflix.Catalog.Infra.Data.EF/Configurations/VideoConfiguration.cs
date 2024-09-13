@@ -26,8 +26,8 @@ internal class VideoConfiguration : IEntityTypeConfiguration<Video>
             thumbHalf.Property(image => image.Path).HasColumnName("ThumbHalfPath")
         );
         //relations with others entities
-        builder.HasOne(x => x.Media).WithOne().HasForeignKey<Media>();
-        builder.HasOne(x => x.Trailer).WithOne().HasForeignKey<Media>();
-        
+        builder.HasOne(x => x.Media).WithOne().HasForeignKey<Video>("MediaId");
+        builder.HasOne(x => x.Trailer).WithOne().HasForeignKey<Video>("TrailerId");
+        builder.Ignore(x => x.Events);
     }
 }

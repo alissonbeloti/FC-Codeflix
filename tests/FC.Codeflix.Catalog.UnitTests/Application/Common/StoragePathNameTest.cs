@@ -15,7 +15,7 @@ public class StoragePathNameTest
 
         var name = StorageName.Create(exampleId, propertyName, exampleExtension);
 
-        name.Should().Be($"{exampleId}-{propertyName.ToLower()}.{exampleExtension}");
+        name.Should().Be($"{exampleId}/{propertyName.ToLower()}.{exampleExtension}");
 
     }
 }

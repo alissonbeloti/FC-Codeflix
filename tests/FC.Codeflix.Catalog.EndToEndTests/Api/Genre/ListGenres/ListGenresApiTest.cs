@@ -24,7 +24,7 @@ public class ListGenresApiTest: IDisposable
     {
         List<DomainEntity.Genre> exampleGenres = _fixture.GetExampleGenresList(10);
         var targetGenre = exampleGenres[5];
-        await _fixture.Persistence.InsertList(exampleGenres);
+        await _fixture.GenrePersistence.InsertList(exampleGenres);
 
         var input = new ListGenresInput();
         input.Page = 1;
@@ -76,9 +76,9 @@ public class ListGenresApiTest: IDisposable
                 categoryId => genresCategories.Add(new GenresCategories(categoryId, genre.Id))
             )
         );
-        await _fixture.Persistence.InsertList(exampleGenres);
+        await _fixture.GenrePersistence.InsertList(exampleGenres);
         await _fixture.CategoryPersitence.InsertList(exampleCategories);
-        await _fixture.Persistence.InsertGenresCategoriesRelationsList(genresCategories);
+        await _fixture.GenrePersistence.InsertGenresCategoriesRelationsList(genresCategories);
         var input = new ListGenresInput();
         input.Page = 1;
         input.PerPage = exampleGenres.Count;
@@ -150,7 +150,7 @@ public class ListGenresApiTest: IDisposable
     {
         List<DomainEntity.Genre> exampleGenres = _fixture.GetExampleGenresList(quantityToGenerate);
         var targetGenre = exampleGenres[5];
-        await _fixture.Persistence.InsertList(exampleGenres);
+        await _fixture.GenrePersistence.InsertList(exampleGenres);
 
         var input = new ListGenresInput();
         input.Page = page;
@@ -202,7 +202,7 @@ public class ListGenresApiTest: IDisposable
             "Sci-fi Robots",
             "Sci-fi Future",
         });
-        await _fixture.Persistence.InsertList(exampleGenresList);
+        await _fixture.GenrePersistence.InsertList(exampleGenresList);
 
         var input = new ListGenresInput();
         input.Page = page;
@@ -243,7 +243,7 @@ public class ListGenresApiTest: IDisposable
     public async Task Ordered(string orderBy, string order)
     {
         var exampleGenresList = _fixture.GetExampleGenresList(10);
-        await _fixture.Persistence.InsertList(exampleGenresList);
+        await _fixture.GenrePersistence.InsertList(exampleGenresList);
 
         var input = new ListGenresInput();
         input.Page = 1;
@@ -280,8 +280,5 @@ public class ListGenresApiTest: IDisposable
 
     }
 
-    public void Dispose()
-    {
-        _fixture.CleanPersistence();
-    }
+    public void Dispose() => _fixture.CleanPersistence();
 }

@@ -9,7 +9,7 @@ using FC.Codeflix.Catalog.Infra.Data.EF.Models;
 namespace FC.Codeflix.Catalog.EndToEndTests.Api.Genre.DeleteGenre;
 
 [Collection(nameof(DeleteGenreApiTestFixture))]
-public class DeleteGenreApiTest
+public class DeleteGenreApiTest : IDisposable
 {
     private readonly DeleteGenreApiTestFixture _fixture;
 
@@ -22,7 +22,7 @@ public class DeleteGenreApiTest
 
         List<DomainEntity.Genre> exampleGenres = _fixture.GetExampleGenresList(10);
         var targetGenre = exampleGenres[5];
-        await _fixture.Persistence.InsertList(exampleGenres);
+        await _fixture.GenrePersistence.InsertList(exampleGenres);
 
         var (response, output) = await _fixture.ApiClient
             .Delete<object>($"/genres/{targetGenre.Id}");
@@ -30,7 +30,7 @@ public class DeleteGenreApiTest
         response.Should().NotBeNull();
         response!.StatusCode.Should().Be(HttpStatusCode.NoContent);
         output.Should().BeNull();
-        DomainEntity.Genre? genreDb = await _fixture.Persistence.GetById(targetGenre.Id);
+        DomainEntity.Genre? genreDb = await _fixture.GenrePersistence.GetById(targetGenre.Id);
         genreDb.Should().BeNull();
     }
 
@@ -41,7 +41,7 @@ public class DeleteGenreApiTest
 
         List<DomainEntity.Genre> exampleGenres = _fixture.GetExampleGenresList(10);
         var randomGuid = Guid.NewGuid();
-        await _fixture.Persistence.InsertList(exampleGenres);
+        await _fixture.GenrePersistence.InsertList(exampleGenres);
 
         var (response, output) = await _fixture.ApiClient
             .Delete<ProblemDetails>($"/genres/{randomGuid}");
@@ -79,9 +79,9 @@ public class DeleteGenreApiTest
             )
         );
 
-        await _fixture.Persistence.InsertList(exampleGenres);
+        await _fixture.GenrePersistence.InsertList(exampleGenres);
         await _fixture.CategoryPersitence.InsertList(exampleCategories);
-        await _fixture.Persistence.InsertGenresCategoriesRelationsList(genresCategories);
+        await _fixture.GenrePersistence.InsertGenresCategoriesRelationsList(genresCategories);
 
         var (response, output) = await _fixture.ApiClient
             .Delete<object>($"/genres/{targetGenre.Id}");
@@ -89,9 +89,11 @@ public class DeleteGenreApiTest
         response.Should().NotBeNull();
         response!.StatusCode.Should().Be(HttpStatusCode.NoContent);
         output.Should().BeNull();
-        DomainEntity.Genre? genreDb = await _fixture.Persistence.GetById(targetGenre.Id);
+        DomainEntity.Genre? genreDb = await _fixture.GenrePersistence.GetById(targetGenre.Id);
         genreDb.Should().BeNull();
-        List<GenresCategories> relations = await _fixture.Persistence.GetGenresCategoriesRelationsByGenreId(targetGenre.Id);
+        List<GenresCategories> relations = await _fixture.GenrePersistence.GetGenresCategoriesRelationsByGenreId(targetGenre.Id);
         relations.Should().HaveCount(0);
     }
+
+    public void Dispose() => _fixture.CleanPersistence();
 }
