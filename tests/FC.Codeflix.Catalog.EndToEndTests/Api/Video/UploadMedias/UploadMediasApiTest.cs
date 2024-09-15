@@ -1,5 +1,6 @@
 ﻿using FC.Codeflix.Catalog.Application.Common;
 using FC.Codeflix.Catalog.Application.Common.Stream;
+using FC.Codeflix.Catalog.Domain.Events;
 using FC.Codeflix.Catalog.EndToEndTests.Api.Video.Common;
 
 using FluentAssertions;
@@ -158,8 +159,6 @@ public class UploadMediasApiTest : IDisposable
     {
         var exampleVideos = _fixture.GetVideoCollection(5);
         await _fixture.VideoPersistence.InsertList(exampleVideos);
-        _fixture.SetupRabbitMQ();
-
 
         var videoId = exampleVideos[2].Id;
         var mediaType = "video";
@@ -185,13 +184,14 @@ public class UploadMediasApiTest : IDisposable
             It.IsAny<CancellationToken>(),
             It.IsAny<IProgress<IUploadProgress>>()
             ), Times.Once);
-        var (@event, remainingMessages) = _fixture.ReadMessageFromRabbitMQ();
+        var (@event, remainingMessages) = _fixture
+            .ReadMessageFromRabbitMQ<VideoUploadedEvent>();
         remainingMessages.Should().Be(0);
         @event.Should().NotBeNull();
         @event!.FilePath.Should().Be(expectedFileName);
         @event.ResourceId.Should().Be(videoId);
         @event.OccuredOn.Should().NotBe(default);
-        _fixture.TearDownRabbitMQ();
+        _fixture.PurgeRabbitMQQueues();
     }
 
     [Fact(DisplayName = nameof(Error422WhenMediaTypeIsInvalid))]
@@ -200,7 +200,7 @@ public class UploadMediasApiTest : IDisposable
     {
         var exampleVideos = _fixture.GetVideoCollection(5);
         await _fixture.VideoPersistence.InsertList(exampleVideos);
-        _fixture.SetupRabbitMQ();
+
         var videoId = exampleVideos[2].Id;
         var mediaType = "thumb";
         var file = _fixture.GetValidImageFileInput();
@@ -222,7 +222,7 @@ public class UploadMediasApiTest : IDisposable
     {
         var exampleVideos = _fixture.GetVideoCollection(5);
         await _fixture.VideoPersistence.InsertList(exampleVideos);
-        _fixture.SetupRabbitMQ();
+
         var videoId = Guid.NewGuid();
         var mediaType = "banner";
         var file = _fixture.GetValidImageFileInput();

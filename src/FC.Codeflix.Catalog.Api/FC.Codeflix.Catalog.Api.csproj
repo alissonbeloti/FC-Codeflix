@@ -35,4 +35,10 @@
     <ProjectReference Include="..\FC.Codeflix.Catalog.Infra.Storage\FC.Codeflix.Catalog.Infra.Storage.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Content Update="gcp_credentials.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
 </Project>

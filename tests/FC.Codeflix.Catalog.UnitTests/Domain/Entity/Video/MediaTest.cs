@@ -43,5 +43,16 @@ public class MediaTest(VideoTestFixture fixture)
         media.EncondedPath.Should().Be(encodedPath);
     }
 
+    [Fact(DisplayName = nameof(UpdateAsEncodingError))]
+    [Trait("Domain", "Media - Entities")]
+    public void UpdateAsEncodingError()
+    {
+        var media = fixture.GetValidMedia();
+        media.UpdateAsSentToEncode();
 
+        media.UpdateAsEncodingError();
+
+        media.Status.Should().Be(MediaStatus.Error);
+        media.EncondedPath.Should().BeNull();
+    }
 }

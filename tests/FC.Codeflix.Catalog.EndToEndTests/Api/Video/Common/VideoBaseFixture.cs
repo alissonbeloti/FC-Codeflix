@@ -1,18 +1,15 @@
-﻿using FC.Codeflix.Catalog.Api.ApiModels.Video;
-using FC.Codeflix.Catalog.Application.UseCases.Video.Common;
-using DomainEntity = FC.Codeflix.Catalog.Domain.Entity;
+﻿using System.Text;
+using RabbitMQ.Client;
+using System.Text.Json;
 using FC.Codeflix.Catalog.Domain.Enum;
-using FC.Codeflix.Catalog.EndToEndTests.Api.Genre.Common;
-
-using System.Text;
-using FC.Codeflix.Catalog.Domain.Entity;
 using FC.Codeflix.Catalog.Domain.Extensions;
+using FC.Codeflix.Catalog.Api.ApiModels.Video;
+using FC.CodeFlix.Catalog.Infra.Message.JsonPolicies;
+using DomainEntity = FC.Codeflix.Catalog.Domain.Entity;
+using FC.Codeflix.Catalog.EndToEndTests.Api.Genre.Common;
+using FC.Codeflix.Catalog.Application.UseCases.Video.Common;
 using FC.Codeflix.Catalog.EndToEndTests.Api.CastMember.Common;
 using FC.Codeflix.Catalog.Domain.SeedWork.SearchableRepository;
-using static Bogus.DataSets.Name;
-using FC.Codeflix.Catalog.Domain.Events;
-using System.Text.Json;
-using FC.CodeFlix.Catalog.Infra.Message.JsonPolicies;
 
 namespace FC.Codeflix.Catalog.EndToEndTests.Api.Video.Common;
 
@@ -23,45 +20,58 @@ public class VideoBaseFixture : GenreBaseFixture
 {
     public VideoPersistence VideoPersistence { get; private set; }
     public CastMemberPersistence CastMemberPersistence { get; private set; }
-    private const string VideoCreatedQueue = "video.created.queue";
-    private const string RoutingKey = "video.created";
+    
     public VideoBaseFixture() : base()
     {
         VideoPersistence = new VideoPersistence(DbContext);
         CastMemberPersistence = new CastMemberPersistence(DbContext);
     }
 
-    public void SetupRabbitMQ()
-    {
-        var channel = WebAppFactory.RabbitMQChannel;
-        var exchange = WebAppFactory.RabbitMQConfiguration!.Exchange;
-        channel.ExchangeDeclare(exchange, "direct", true, true, null);
-        channel.QueueDeclare(VideoCreatedQueue, true, false, false, null);
-        channel.QueueBind(VideoCreatedQueue, exchange, RoutingKey, null);
-    }
-
     public void TearDownRabbitMQ()
     {
         var channel = WebAppFactory.RabbitMQChannel;
         var exchange = WebAppFactory.RabbitMQConfiguration!.Exchange;
-        channel.QueueUnbind(VideoCreatedQueue, exchange, RoutingKey, null);
-        channel.QueueDelete(VideoCreatedQueue, false, false);
+        channel.QueueUnbind(WebAppFactory.VideoCreatedQueue, exchange, WebAppFactory.VideoCreatedRoutingKey, null);
+        channel.QueueDelete(WebAppFactory.VideoCreatedQueue, false, false);
         channel.ExchangeDelete(exchange, false);
     }
 
-    public (VideoUploadedEvent?, uint) ReadMessageFromRabbitMQ()
+    public (T?, uint) ReadMessageFromRabbitMQ<T>()
+        where T: class
     {
         var consumingResult = WebAppFactory.RabbitMQChannel
-            .BasicGet(VideoCreatedQueue, true);
+            .BasicGet(WebAppFactory.VideoCreatedQueue, true);
+        if (consumingResult is null) return (null, 0);
         var rawMessage = consumingResult.Body.ToArray();
         var stringMessage = Encoding.UTF8.GetString(rawMessage);
         var jsonOptions = new JsonSerializerOptions
         {
             PropertyNamingPolicy = new JsonSnakeCasePolicy()
         };
-        var @event = JsonSerializer.Deserialize<VideoUploadedEvent>(
+        var @event = JsonSerializer.Deserialize<T>(
             stringMessage, jsonOptions);
         return (@event, consumingResult.MessageCount);
+    }
+
+    public void PublishMessageToRabbitMQ(object exampleEvent)
+    {
+        var exchange = WebAppFactory.RabbitMQConfiguration.Exchange;
+        var jsonOptions = new JsonSerializerOptions
+        {
+            PropertyNamingPolicy = new JsonSnakeCasePolicy()
+        };
+        var message = JsonSerializer.SerializeToUtf8Bytes(exampleEvent, jsonOptions);
+        WebAppFactory.RabbitMQChannel.BasicPublish(exchange: exchange,
+            routingKey: WebAppFactory.VideoEncodedRoutingKey, 
+            body: message);
+
+    }
+
+    public void PurgeRabbitMQQueues()
+    {
+        IModel channel = WebAppFactory.RabbitMQChannel;
+        channel.QueuePurge(WebAppFactory.VideoCreatedQueue);
+        channel.QueuePurge(WebAppFactory.RabbitMQConfiguration.VideoEncodedQueue);
     }
 
     public CreateVideoApiInput GetBasicCreateVideoInput()
@@ -203,4 +213,5 @@ public class VideoBaseFixture : GenreBaseFixture
         };
         return orderedEnumerable.ToList();
     }
+
 }

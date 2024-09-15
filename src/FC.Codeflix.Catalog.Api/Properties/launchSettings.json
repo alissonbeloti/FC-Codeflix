@@ -34,11 +34,13 @@
       "launchUrl": "{Scheme}://{ServiceHost}:{ServicePort}/swagger",
       "environmentVariables": {
         "ASPNETCORE_HTTPS_PORTS": "8081",
-        "ASPNETCORE_HTTP_PORTS": "8080"
+        "ASPNETCORE_HTTP_PORTS": "8080",
+        "GOOGLE_APPLICATION_CREDENTIALS": "gcp_credentials.json"
+
       },
       "publishAllPorts": true,
       "useSSL": true,
-      "DockerfileRunArguments": "--network service_catalog"
+      "DockerfileRunArguments": "--network service_catalog",
     },
     "WSL": {
       "commandName": "WSL2",

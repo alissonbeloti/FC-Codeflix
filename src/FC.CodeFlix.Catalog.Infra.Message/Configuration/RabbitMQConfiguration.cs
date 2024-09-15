@@ -7,4 +7,5 @@ public class RabbitMQConfiguration
     public string? Password { get; set; }
     public string? Exchange { get; set; }
     public int? Port { get; set; }
+    public string? VideoEncodedQueue { get; set; }
 }

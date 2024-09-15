@@ -1,4 +1,5 @@
 ﻿using FC.Codeflix.Catalog.Domain.Enum;
+
 namespace FC.Codeflix.Catalog.Domain.Entity;
 public class Media : SeedWork.Entity
 {
@@ -20,5 +21,11 @@ public class Media : SeedWork.Entity
     {
         Status = MediaStatus.Completed;
         EncondedPath = encodedPath;
+    }
+
+    public void UpdateAsEncodingError()
+    {
+        Status = MediaStatus.Error;
+        EncondedPath = null;
     }
 }

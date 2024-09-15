@@ -9,7 +9,7 @@ using Microsoft.Extensions.Configuration;
 //using Microsoft.VisualStudio.TestPlatform.TestHost;
 
 namespace FC.Codeflix.Catalog.EndToEndTests.Base;
-public class BaseFixture
+public class BaseFixture : IDisposable
 {
     protected Faker Faker { get; set; }
     public CustomWebApplicationFactory<Program> WebAppFactory { get; set; }
@@ -83,4 +83,9 @@ public class BaseFixture
 
     internal List<CastMember> GetExampleCastMemberList(int count = 10)
         => Enumerable.Range(1, count).Select(_ => GetExampleCastMember()).ToList();
+
+    public void Dispose()
+    {
+        WebAppFactory.Dispose();
+    }
 }
