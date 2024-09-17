@@ -4,8 +4,11 @@ using FC.Codeflix.Catalog.Domain.Entity;
 using FC.Codeflix.Catalog.Domain.Enum;
 using FC.Codeflix.Catalog.Infra.Data.EF.Configurations;
 
+using Keycloak.AuthServices.Authentication;
+
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 //using Microsoft.VisualStudio.TestPlatform.TestHost;
 
 namespace FC.Codeflix.Catalog.EndToEndTests.Base;
@@ -21,10 +24,12 @@ public class BaseFixture : IDisposable
         Faker = new Faker("pt_BR"); 
         WebAppFactory = new CustomWebApplicationFactory<Program>();
         HttpClient = WebAppFactory.CreateClient();
-        ApiClient = new ApiClient(HttpClient);
-        var configuration = WebAppFactory.Services.GetService(typeof(IConfiguration));
-        ArgumentNullException.ThrowIfNull(configuration, nameof(configuration));
-        _dbConnectionString = ((IConfiguration)configuration).GetConnectionString("CatalogDb");
+        var configuration = WebAppFactory.Services.GetRequiredService<IConfiguration>();
+        var keycloakOptions = configuration.GetSection(KeycloakAuthenticationOptions.Section)
+            .Get<KeycloakAuthenticationOptions>();
+        ApiClient = new ApiClient(HttpClient, keycloakOptions!);
+        ArgumentNullException.ThrowIfNull(configuration);
+        _dbConnectionString = configuration.GetConnectionString("CatalogDb");
     }
 
     public CodeflixCatalogDbContext CreateDbContext()

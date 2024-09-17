@@ -1,8 +1,6 @@
 ﻿using FC.Codeflix.Catalog.Api.ApiModels.Response;
 using FC.Codeflix.Catalog.Api.ApiModels.Video;
-using FC.Codeflix.Catalog.Application.UseCases.Genre.Common;
-using FC.Codeflix.Catalog.Application.UseCases.Genre.GetGenre;
-using FC.Codeflix.Catalog.Application.UseCases.Genre.ListGenres;
+using FC.Codeflix.Catalog.Api.Authorization;
 using FC.Codeflix.Catalog.Application.UseCases.Video.Common;
 using FC.Codeflix.Catalog.Application.UseCases.Video.DeleteVideo;
 using FC.Codeflix.Catalog.Application.UseCases.Video.GetVideo;
@@ -11,12 +9,14 @@ using FC.Codeflix.Catalog.Domain.SeedWork.SearchableRepository;
 
 using MediatR;
 
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace FC.Codeflix.Catalog.Api.Controllers;
 
 [Route("[controller]")]
 [ApiController]
+[Authorize(Policy = Policies.VideosManager)]
 public class VideosController: ControllerBase
 {
     private readonly IMediator _mediator;

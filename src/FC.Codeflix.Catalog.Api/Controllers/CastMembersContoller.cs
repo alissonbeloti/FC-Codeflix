@@ -11,11 +11,14 @@ using FC.Codeflix.Catalog.Application.UseCases.Category.Common;
 using FC.Codeflix.Catalog.Application.UseCases.Category.ListCategories;
 using FC.Codeflix.Catalog.Domain.SeedWork.SearchableRepository;
 using FC.Codeflix.Catalog.Application.UseCases.CastMember.ListCastMembers;
+using Microsoft.AspNetCore.Authorization;
+using FC.Codeflix.Catalog.Api.Authorization;
 
 namespace FC.Codeflix.Catalog.Api.Controllers;
 
 [Route("[controller]")]
 [ApiController]
+[Authorize(Roles = $"{Roles.CastMembers},{Roles.Admin}")]
 public class CastMembersController(IMediator mediator): ControllerBase
 {
 

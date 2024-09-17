@@ -3,6 +3,8 @@ using System.Text.Json;
 using Microsoft.AspNetCore.WebUtilities;
 using FC.CodeFlix.Catalog.Infra.Message.JsonPolicies;
 using FC.Codeflix.Catalog.Application.UseCases.Video.Common;
+using Keycloak.AuthServices.Authentication;
+using System.Net.Http.Headers;
 
 namespace FC.Codeflix.Catalog.EndToEndTests.Base;
 
@@ -10,16 +12,53 @@ public class ApiClient
 {
     private readonly HttpClient _httpClient;
     private readonly JsonSerializerOptions _defaultSerializeOptions;
-    public ApiClient(HttpClient httpClient)
+    private readonly KeycloakAuthenticationOptions _keycloakOptions;
+    private const string _adminUser = "admin";
+    private const string _adminPassword = "123456";
+    public ApiClient(HttpClient httpClient,
+        KeycloakAuthenticationOptions keycloakOptions)
     {  
         _httpClient = httpClient;
+        _keycloakOptions = keycloakOptions;
         _defaultSerializeOptions = new JsonSerializerOptions
         {
             PropertyNamingPolicy = new JsonSnakeCasePolicy(),
             PropertyNameCaseInsensitive = true,
         };
+        AddAuthorizationHeader();
     }
-        
+    
+    public async Task<string> GetAccessTokenAsync(string user, string password)
+    {
+        var client = new HttpClient();
+        var request = new HttpRequestMessage(HttpMethod.Post, 
+            $"{_keycloakOptions.KeycloakUrlRealm}/protocol/openid-connect/token");
+        var collection = new List<KeyValuePair<string, string>>
+        {
+            new("grant_type", "password"),
+            new("client_id", _keycloakOptions.Resource),
+            new("client_secret", _keycloakOptions.Credentials.Secret),
+            new("username", user),
+            new("password", password)
+        };
+        var content = new FormUrlEncodedContent(collection);
+        request.Content = content;
+        var response = await client.SendAsync(request);
+        var credentials = await GetOutput<Credentials>(response);
+        return credentials!.AccessToken;
+    }
+
+    private void AddAuthorizationHeader()
+    {
+        var accessToken = GetAccessTokenAsync(_adminUser, _adminPassword)
+            .GetAwaiter().GetResult();
+        _httpClient.DefaultRequestHeaders
+            .Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
+    }
+
+    public async Task<HttpResponseMessage> SendAsync(HttpRequestMessage request) =>
+        await _httpClient.SendAsync(request);
+    
 
     public async Task<(HttpResponseMessage?, TOutput?)> Post<TOutput>(string route, object payload)
         where TOutput : class
